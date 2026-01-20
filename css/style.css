@@ -1,17 +1,12 @@
 :root {
-    /* Paleta Corporativa Nutri Data Pro */
-    --bg-dark: #000000;              /* Fondo Negro absoluto */
-    --glass-bg: rgba(30, 30, 30, 0.7); /* Gris oscuro translúcido */
-    --glass-border: rgba(255, 255, 255, 0.15); /* Bordes sutiles blancos */
-    
-    --brand-red: #D32F2F;            /* Rojo corporativo (botones, acentos) */
-    --brand-red-hover: #b71c1c;      /* Rojo oscuro para hovers */
-    --accent-gray: #424242;          /* Gris medio para elementos secundarios */
-    
-    --text-main: #ffffff;            /* Blanco puro */
-    --text-muted: #b0b0b0;           /* Gris claro para textos secundarios */
-    
-    --blur-amt: 25px;                /* Efecto cristal */
+    /* Paleta NDP */
+    --bg-dark: #000000;
+    --panel-bg: rgba(20, 20, 20, 0.95);
+    --border-color: #333333;
+    --brand-red: #D32F2F;
+    --brand-red-hover: #b71c1c;
+    --text-main: #ffffff;
+    --text-muted: #9e9e9e;
 }
 
 body {
@@ -22,235 +17,157 @@ body {
     overflow: hidden;
 }
 
-/* --- Fondo Animado (Adaptado a Rojo/Gris) --- */
+/* Fondos */
 .background-blobs {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1;
-    overflow: hidden;
-    pointer-events: none;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
 }
 .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.3; /* Más sutiles para ser elegantes */
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15;
 }
-/* Blob Rojo sutil arriba */
-.blob-1 { width: 600px; height: 600px; background: var(--brand-red); top: -200px; left: -100px; opacity: 0.2; }
-/* Blob Gris/Blanco abajo derecha */
-.blob-2 { width: 700px; height: 700px; background: #333333; bottom: -200px; right: -200px; opacity: 0.2; }
-/* Pequeño destello rojo central */
-.blob-3 { width: 300px; height: 300px; background: var(--brand-red); top: 40%; left: 40%; opacity: 0.05; }
+.blob-1 { width: 600px; height: 600px; background: var(--brand-red); top: -200px; left: -100px; }
+.blob-2 { width: 500px; height: 500px; background: #333; bottom: -100px; right: -100px; }
 
-/* --- Layout --- */
-.app-container {
-    display: flex;
-    height: 100vh;
-}
-
-/* --- Paneles de Cristal (Gris Oscuro) --- */
+/* Layout */
+.app-container { display: flex; height: 100vh; }
 .glass-panel {
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--blur-amt));
-    -webkit-backdrop-filter: blur(var(--blur-amt));
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.8);
 }
 
-/* --- Sidebar --- */
+/* Sidebar */
 .sidebar {
-    width: 260px;
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid var(--glass-border);
-    z-index: 10;
+    width: 250px; padding: 30px 20px; display: flex; flex-direction: column;
+    border-right: 1px solid var(--border-color);
 }
-.logo h2 { 
-    font-weight: 800; 
-    letter-spacing: -0.5px; 
-    margin: 0 0 50px 0; 
-    font-size: 1.4rem;
-    color: var(--text-main);
-    border-left: 4px solid var(--brand-red); /* Detalle rojo marca */
-    padding-left: 15px;
+.logo h2 {
+    color: white; font-weight: 800; letter-spacing: -1px; margin-bottom: 40px;
+    border-left: 4px solid var(--brand-red); padding-left: 10px;
 }
 .highlight { color: var(--brand-red); }
 
 .nav-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    width: 100%;
-    text-align: left;
-    padding: 16px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: 0.2s;
-    border-radius: 8px;
-    font-weight: 500;
-    border-left: 3px solid transparent;
+    background: transparent; border: none; color: var(--text-muted);
+    width: 100%; text-align: left; padding: 15px; cursor: pointer;
+    font-size: 1rem; border-radius: 6px; margin-bottom: 5px; transition: 0.2s;
 }
-.nav-btn:hover { color: white; background: rgba(255,255,255,0.05); }
-.nav-btn.active {
-    background: linear-gradient(90deg, rgba(211, 47, 47, 0.15) 0%, transparent 100%);
-    color: white;
+.nav-btn:hover, .nav-btn.active {
+    background: rgba(211, 47, 47, 0.1); color: white;
     border-left: 3px solid var(--brand-red);
 }
-.nav-btn i { margin-right: 12px; }
+.nav-btn i { margin-right: 10px; }
 
 .user-profile {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-top: 20px;
-    border-top: 1px solid var(--glass-border);
+    margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color);
+    display: flex; gap: 10px; align-items: center;
 }
 .avatar {
-    width: 40px; height: 40px;
-    background: var(--brand-red);
-    color: white;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: bold;
-    font-size: 0.9rem;
+    width: 35px; height: 35px; background: var(--brand-red); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;
 }
 
-/* --- Main Content --- */
-.main-content {
-    flex: 1;
-    padding: 40px;
-    overflow-y: auto;
-}
-
+/* Main */
+.main-content { flex: 1; padding: 40px; overflow-y: auto; }
 .glass-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 40px;
-    padding-bottom: 25px;
-    border-bottom: 1px solid var(--glass-border);
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 1px solid var(--border-color); padding-bottom: 20px; margin-bottom: 30px;
 }
 .wrap-header { flex-wrap: wrap; gap: 20px; }
-.glass-header h1 { margin: 0; font-size: 2rem; font-weight: 700; color: white; }
-.subtitle { margin: 5px 0 0 0; color: var(--text-muted); }
+.glass-header h1 { margin: 0; font-size: 1.8rem; }
+.subtitle { color: var(--text-muted); margin: 5px 0 0 0; }
 
 /* Toolbar */
-.toolbar {
-    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-}
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
 .search-box {
-    background: rgba(0,0,0,0.5);
-    border: 1px solid var(--glass-border);
-    border-radius: 6px;
+    background: #111; border: 1px solid #333; border-radius: 5px;
     display: flex; align-items: center; padding: 0 10px;
 }
-.search-box i { color: var(--text-muted); }
+.search-box i { color: #666; }
 .search-box input, .search-box select {
     background: transparent; border: none; color: white; padding: 10px; outline: none;
 }
-.search-box input { width: 100px; }
+.search-box input { width: 80px; }
 
-/* --- Tarjetas (Cards) --- */
+/* Grid Cards */
+.grid-container {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
+}
 .card {
-    background: rgba(40, 40, 40, 0.4); /* Gris oscuro */
-    border-radius: 12px;
-    padding: 24px;
-    border: 1px solid var(--glass-border);
-    transition: all 0.2s ease;
-    position: relative;
-    display: flex; flex-direction: column;
+    background: #161616; border: 1px solid #2a2a2a; border-radius: 10px; padding: 20px;
+    display: flex; flex-direction: column; transition: 0.2s; position: relative;
 }
-.card:hover {
-    transform: translateY(-4px);
-    background: rgba(60, 60, 60, 0.5);
-    border-color: var(--brand-red); /* Borde rojo al pasar ratón */
-}
-.card h3 { margin: 10px 0 5px 0; font-size: 1.15rem; color: white; }
-.card p { color: var(--text-muted); font-size: 0.9rem; flex-grow: 1; }
+.card:hover { transform: translateY(-3px); border-color: var(--brand-red); }
+.card h3 { margin: 10px 0 5px 0; font-size: 1.1rem; }
+.card p { color: var(--text-muted); font-size: 0.85rem; flex-grow: 1; line-height: 1.4; margin-bottom: 15px;}
 
 .status-badge {
-    padding: 4px 10px;
-    border-radius: 4px; /* Más cuadrado, más técnico */
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase;
 }
 
-/* --- Botones --- */
+/* Botones */
 .btn-primary {
-    background: var(--brand-red);
-    color: white;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
+    background: var(--brand-red); color: white; border: none; padding: 10px 20px;
+    border-radius: 6px; cursor: pointer; font-weight: 600;
 }
-.btn-primary:hover { background: var(--brand-red-hover); transform: translateY(-1px); }
+.btn-primary:hover { background: var(--brand-red-hover); }
 
 .btn-danger {
-    background: transparent;
-    color: var(--brand-red);
-    border: 1px solid var(--brand-red);
-    padding: 8px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.2s;
+    background: transparent; border: 1px solid var(--brand-red); color: var(--brand-red);
+    padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600;
 }
 .btn-danger:hover { background: var(--brand-red); color: white; }
 
 .btn-assign {
-    width: 100%;
-    margin-top: 15px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--glass-border);
-    color: white;
-    padding: 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    display: flex; justify-content: center; align-items: center; gap: 8px;
-    transition: 0.2s;
+    background: #222; border: 1px solid #333; color: white; padding: 8px;
+    width: 100%; border-radius: 6px; cursor: pointer; display: flex;
+    justify-content: center; align-items: center; gap: 8px; font-size: 0.9rem;
 }
-.btn-assign:hover { background: var(--brand-red); border-color: var(--brand-red); }
+.btn-assign:hover { background: #333; }
 
-/* --- Modals --- */
+/* Modals & Detalles */
 .modal {
-    display: none; position: fixed; z-index: 100;
-    left: 0; top: 0; width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.9);
-    backdrop-filter: blur(5px);
+    display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
 }
 .modal-content {
-    margin: 5% auto; padding: 40px; width: 90%; max-width: 600px;
-    border-radius: 12px; background: #121212;
-    border: 1px solid #333;
+    margin: 5% auto; padding: 30px; width: 90%; max-width: 500px;
+    border-radius: 12px; border: 1px solid #333;
 }
-.large-modal { max-width: 800px; max-height: 90vh; overflow-y: auto; }
-.close { position: absolute; top: 20px; right: 25px; font-size: 28px; cursor: pointer; color: #888; }
-.close:hover { color: var(--brand-red); }
+.large-modal { max-width: 900px; max-height: 90vh; overflow-y: auto; }
+.close { position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: #666; }
+.close:hover { color: white; }
 
-/* Inputs en Modal */
-label { color: #ccc; font-size: 0.85rem; margin-top: 15px; display: block; }
+/* Inputs Form */
+label { display: block; margin-top: 15px; color: #ccc; font-size: 0.85rem; }
 input:not(.search-box input), select:not(.search-box select) {
-    width: 100%; padding: 12px; background: #222; border: 1px solid #444;
-    color: white; border-radius: 6px; box-sizing: border-box; margin-top: 5px;
+    width: 100%; padding: 10px; background: #222; border: 1px solid #333;
+    color: white; border-radius: 5px; box-sizing: border-box; margin-top: 5px;
 }
 input:focus, select:focus { outline: none; border-color: var(--brand-red); }
 
-/* Detalles Dieta */
-.meal-row { border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 15px; }
-.meal-row h4 { color: var(--brand-red); margin: 0 0 5px 0; font-size: 0.95rem; text-transform: uppercase; }
-.presentation-toggle { color: #888; cursor: pointer; font-size: 0.8rem; text-decoration: underline; }
-.presentation-toggle:hover { color: white; }
-.plate-image {
-    width: 100%; height: 100px; background: #111; border: 1px dashed #444;
-    border-radius: 6px; margin-top: 10px; display: none;
-    align-items: center; justify-content: center; color: #666;
+/* Estilos de la Vista Detallada de Dieta */
+.diet-header-grid {
+    display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px;
 }
+@media (max-width: 768px) { .diet-header-grid { grid-template-columns: 1fr; } }
+
+.hydration-box {
+    background: rgba(0, 180, 255, 0.05); border: 1px solid rgba(0, 180, 255, 0.2);
+    color: #4fc3f7; padding: 15px; border-radius: 8px; margin-top: 20px;
+    display: flex; align-items: center; gap: 15px; font-size: 0.9rem;
+}
+
+.meal-section {
+    background: #111; border: 1px solid #222; border-radius: 8px; padding: 20px; margin-bottom: 20px;
+}
+.meal-title {
+    color: var(--brand-red); margin: 0 0 15px 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;
+    border-bottom: 1px solid #222; padding-bottom: 10px;
+}
+.option-card {
+    background: #000; padding: 12px; border-radius: 6px; margin-bottom: 8px;
+    border-left: 3px solid #333; display: flex; flex-direction: column;
+}
+.option-card:hover { border-left-color: var(--brand-red); background: #050505; }
+.opt-badge { font-size: 0.7rem; color: #666; font-weight: bold; margin-bottom: 3px; }
+.opt-desc { font-size: 0.95rem; color: #ddd; }

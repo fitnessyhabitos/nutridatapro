@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nutri Data Pro | Dashboard</title>
+    <title>Nutri Data Pro | Panel de Control</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <div class="background-blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
     </div>
 
     <div class="app-container">
@@ -23,17 +23,17 @@
             </div>
             <nav>
                 <button class="nav-btn active" onclick="showSection('clients')">
-                    <i class="bi bi-people"></i> Atletas
+                    <i class="bi bi-people-fill"></i> Atletas
                 </button>
                 <button class="nav-btn" onclick="showSection('diets')">
-                    <i class="bi bi-journal-medical"></i> Biblioteca NDP
+                    <i class="bi bi-collection-fill"></i> Biblioteca NDP
                 </button>
             </nav>
             <div class="user-profile">
                 <div class="avatar">TR</div>
                 <div class="user-info">
                     <span>Trainer Admin</span>
-                    <small>Pro Account</small>
+                    <small>Cuenta Profesional</small>
                 </div>
             </div>
         </aside>
@@ -44,11 +44,10 @@
                 <header class="glass-header">
                     <div>
                         <h1>Mis Atletas</h1>
-                        <p class="subtitle">Gestión y seguimiento de planes</p>
+                        <p class="subtitle">Gestión de planes asignados</p>
                     </div>
                     <button class="btn-primary" onclick="openModal('clientModal')">+ Nuevo Atleta</button>
                 </header>
-                
                 <div class="grid-container" id="clients-grid">
                     <div class="loading-spinner">Cargando base de datos...</div>
                 </div>
@@ -58,28 +57,28 @@
                 <header class="glass-header wrap-header">
                     <div>
                         <h1>Biblioteca NDP</h1>
-                        <p class="subtitle">Protocolos de Nutrición</p>
+                        <p class="subtitle">Base de datos de Protocolos</p>
                     </div>
                     
                     <div class="toolbar">
                         <div class="search-box">
-                            <i class="bi bi-search"></i>
+                            <i class="bi bi-fire"></i>
                             <input type="number" id="searchKcal" placeholder="Kcal aprox..." oninput="filterDiets()">
                         </div>
                         
                         <div class="search-box">
                             <i class="bi bi-filter"></i>
                             <select id="searchType" onchange="filterDiets()">
-                                <option value="all">Todos los Objetivos</option>
-                                <option value="Déficit">Déficit / Pérdida</option>
+                                <option value="all">Todos los Tipos</option>
+                                <option value="Déficit">Déficit / Definición</option>
                                 <option value="Mantenimiento">Mantenimiento</option>
                                 <option value="Volumen">Volumen / Ganancia</option>
-                                <option value="Salud">Salud / Específico</option>
+                                <option value="Salud">Salud / Paleo / Keto</option>
                             </select>
                         </div>
 
-                        <button class="btn-danger" onclick="resetDatabaseManual()" title="Borrar y recargar dietas por defecto">
-                            <i class="bi bi-arrow-repeat"></i> Reset DB
+                        <button class="btn-danger" onclick="resetDatabaseManual()" title="Recargar las 80 dietas">
+                            <i class="bi bi-database-fill-down"></i> Cargar Pack Dietas
                         </button>
                     </div>
                 </header>
@@ -87,35 +86,32 @@
                 <div class="grid-container" id="diets-grid">
                     </div>
             </section>
-
         </main>
     </div>
 
     <div id="clientModal" class="modal">
         <div class="modal-content glass-panel">
             <span class="close" onclick="closeModal('clientModal')">&times;</span>
-            <h2>Registrar Nuevo Atleta</h2>
+            <h2>Registrar Atleta</h2>
             <form id="addClientForm">
-                <label>Nombre Completo</label>
-                <input type="text" id="clientName" placeholder="Ej: Juan Pérez" required>
-                
-                <label>Email de contacto</label>
-                <input type="email" id="clientEmail" placeholder="juan@email.com" required>
-                
-                <label>Objetivo Principal</label>
+                <label>Nombre</label>
+                <input type="text" id="clientName" required>
+                <label>Email</label>
+                <input type="email" id="clientEmail" required>
+                <label>Objetivo</label>
                 <select id="clientGoal">
-                    <option value="Perdida Grasa">Pérdida de Grasa</option>
-                    <option value="Hipertrofia">Hipertrofia / Ganancia</option>
-                    <option value="Rendimiento">Rendimiento Atlético</option>
-                    <option value="Salud">Salud General / Antiinflamatorio</option>
+                    <option value="Perdida Grasa">Definición</option>
+                    <option value="Volumen">Volumen</option>
+                    <option value="Rendimiento">Rendimiento</option>
+                    <option value="Salud">Salud General</option>
                 </select>
-                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px;">Crear Ficha</button>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar</button>
             </form>
         </div>
     </div>
 
     <div id="dietViewModal" class="modal">
-        <div class="modal-content glass-panel large-modal">
+        <div class="modal-content glass-panel large-modal" style="background:#0a0a0a;">
             <span class="close" onclick="closeModal('dietViewModal')">&times;</span>
             <div id="diet-detail-content">
                 </div>
