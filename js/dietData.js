@@ -1,161 +1,180 @@
 // js/dietData.js
 
-const templates = {
-    // 1. CLÁSICA (Con gramos exactos)
+// FUNCIÓN MATEMÁTICA PARA ESCALAR GRAMOS
+// Busca patrones como "200g", "150g" y los multiplica por el ratio
+const scaleString = (text, ratio) => {
+    return text.replace(/(\d+)g/g, (match, grams) => {
+        const newGrams = Math.round(parseInt(grams) * ratio);
+        return `${newGrams}g`; // Devuelve ej: "350g"
+    }).replace(/(\d+) ud/g, (match, ud) => {
+        // Los huevos/unidades no se suelen escalar decimalmente, redondeamos
+        const newUd = Math.max(1, Math.round(parseInt(ud) * ratio)); 
+        return `${newUd} ud`;
+    });
+};
+
+// DEFINICIÓN DE DIETAS BASE (REFERENCIA: 2500 KCAL)
+// Estas cantidades deben sumar 2500 kcal REALES.
+// Bases: 
+// - Arroz/Pasta: ~360 kcal/100g
+// - Pollo/Carne: ~110-140 kcal/100g
+// - Aceite: 900 kcal/100ml
+const baseTemplates = {
+    
     classic: {
         nameBase: "NDP Classic Bodybuilding",
-        description: "Comida limpia pesada en crudo. Alta frecuencia.",
-        mealsPerDay: 4,
-        macros: { p: 35, c: 45, f: 20 },
+        cat: "Volumen",
+        desc: "Dieta clásica de culturismo. Alta en carbohidratos complejos, baja en grasa. Alimentos limpios pesados en crudo.",
+        baseKcal: 2500, 
+        macros: { p: 30, c: 50, f: 20 },
+        meals: 4,
         isAdLibitum: false,
-        // Usamos placeholders {k} para ajustar cantidad segun Kcal en el generador si quisiéramos lógica compleja,
-        // pero aquí hardcodeamos opciones equilibradas para el rango.
+        // Cantidades para 2500 kcal exactas (aprox)
         plan: {
             breakfast: [
-                { title: "Opción A", desc: "150g Claras de huevo, 1 Huevo L, 60g Avena cocida con agua." },
-                { title: "Opción B", desc: "Batido: 30g Whey Protein, 60g Crema de Arroz, 15g Crema cacahuete." }
+                { title: "Opción Avena", desc: "80g Avena suave, 250ml Claras de huevo, 1 Huevo entero (L), 1 Plátano mediano." },
+                { title: "Opción Tortitas", desc: "90g Harina de Avena, 30g Whey Protein, 10g Cacao puro, 15g Nueces." }
             ],
             lunch: [
-                { title: "Opción A", desc: "150g Pechuga de Pollo (crudo), 200g Arroz blanco cocido, 100g Brócoli." },
-                { title: "Opción B", desc: "150g Ternera magra, 200g Patata asada (airfryer), Ensalada verde." }
+                { title: "Pollo y Arroz", desc: "180g Pechuga Pollo (crudo), 120g Arroz Basmati (peso crudo), 10g Aceite Oliva (1 cda), Verduras libres." },
+                { title: "Ternera y Patata", desc: "180g Ternera Magra, 450g Patata (pesada cruda pelada), Ensalada verde." }
             ],
             snack: [
-                { title: "Opción A", desc: "100g Pavo natural, 3 Tortitas de arroz." },
-                { title: "Opción B", desc: "30g Caseína o Whey, 20g Nueces." }
+                { title: "Pre-Entreno", desc: "50g Crema de Arroz, 30g Whey Protein, 10g Crema de Cacahuete." },
+                { title: "Bocadillo", desc: "100g Pan Barra, 80g Lomo Embuchado o Pavo, 1 pieza Fruta." }
             ],
             dinner: [
-                { title: "Opción A", desc: "150g Merluza/Bacalao, 150g Judías verdes, 10g Aceite Oliva." },
-                { title: "Opción B", desc: "Tortilla francesa (2 huevos), Espárragos trigueros." }
+                { title: "Pescado Blanco", desc: "200g Merluza o Bacalao, 300g Patata asada/cocida, 10g Aceite Oliva, Verduras." },
+                { title: "Salmón", desc: "150g Salmón fresco, 60g Quinoa (peso crudo), Espárragos." }
             ]
         }
     },
 
-    // 2. ANTI INFLAMATORIA (Saciante / Ad Libitum)
-    antiinflamatorio: {
-        nameBase: "NDP Protocolo Anti-Inflamatorio",
-        description: "Sin gluten, lácteos ni procesados. Enfocada en reducir inflamación sistémica. Comer hasta saciedad (Escuchar al cuerpo).",
-        mealsPerDay: 3,
-        macros: { p: 30, c: 20, f: 50 },
-        isAdLibitum: true, // IMPORTANTE: Oculta kcal
-        plan: {
-            breakfast: [
-                { title: "Protocolo Mañana", desc: "Ayuno 12h mínimo. Solo café/té o Agua con limón." },
-                { title: "Opción B (Si hay hambre)", desc: "Huevos revueltos con ghee y aguacate (Sin pan)." }
-            ],
-            lunch: [
-                { title: "Plato Único", desc: "Proteína animal (Carne pasto/Pescado salvaje) + Verduras bajas en lectinas (Crucíferas, hojas verdes) + Aceite de Oliva virgen extra abundante." }
-            ],
-            dinner: [
-                { title: "Carb Backloading", desc: "Pescado blanco o Mariscos. Acompañar de Boniato, Yuca o Plátano macho cocido y enfriado (Almidón resistente)." }
-            ]
-        }
-    },
-
-    // 3. DÉFICIT AGRESIVO (Gramos bajos)
     deficit: {
         nameBase: "NDP Definition Cut",
-        description: "Déficit calculado para pérdida de grasa máxima.",
-        mealsPerDay: 3,
-        macros: { p: 50, c: 20, f: 30 },
+        cat: "Déficit",
+        desc: "Déficit calórico agresivo pero proteico. Reducción de hidratos. Prioridad saciedad.",
+        baseKcal: 2000, // Referencia base 2000 para escalar
+        macros: { p: 40, c: 30, f: 30 },
+        meals: 3,
         isAdLibitum: false,
         plan: {
             breakfast: [
-                { title: "Opción A", desc: "200g Claras de huevo, 50g Espinacas, 1 Tostada integral pequeña." },
-                { title: "Opción B", desc: "1 Yogur +Proteínas (Mercadona/Lidl), 50g Frutos rojos." }
+                { title: "Huevos", desc: "3 Huevos enteros (L), 50g Pan Integral tostado, 1 Kiwi." },
+                { title: "Lácteo", desc: "300g Queso Fresco Batido 0%, 50g Avena, 15g Almendras." }
             ],
             lunch: [
-                { title: "Opción A", desc: "120g Pollo plancha, Ensalada gigante (Lechuga, Pepino), 1 cdta Aceite." },
-                { title: "Opción B", desc: "1 lata Atún natural, 1 Huevo duro, Tomate picado, 10 aceitunas." }
+                { title: "Pollo", desc: "180g Pollo plancha, 60g Arroz integral (crudo), 10g Aceite Oliva, Ensalada gigante." },
+                { title: "Legumbre", desc: "80g Lentejas (peso crudo) estofadas con verduras, 100g Pollo desmenuzado." }
             ],
             dinner: [
-                { title: "Opción A", desc: "150g Pescado blanco, Calabacín al vapor." },
-                { title: "Opción B", desc: "Crema de verduras (sin patata/nata), 100g Sepia plancha." }
+                { title: "Pescado", desc: "200g Pescado Blanco, 200g Patata cocida/asada, 5g Aceite Oliva." },
+                { title: "Sepia/Calamar", desc: "200g Sepia plancha, Ensalada de tomate y pepino, 10g Aceite Oliva." }
             ]
         }
     },
-    
-    // 4. VOLUMEN SUCIO CONTROLADO (Gramos altos)
+
     hardgainer: {
-        nameBase: "NDP Hardgainer Push",
-        description: "Alta densidad calórica para quienes no suben de peso.",
-        mealsPerDay: 5,
-        macros: { p: 25, c: 45, f: 30 },
+        nameBase: "NDP Heavy Duty Bulk",
+        cat: "Volumen",
+        desc: "Volumen alto en calorías. Densidad energética aumentada con grasas y carbos rápidos.",
+        baseKcal: 3500,
+        macros: { p: 20, c: 50, f: 30 },
+        meals: 5,
         isAdLibitum: false,
         plan: {
             breakfast: [
-                { title: "Bomba Calórica", desc: "4 Huevos enteros, 150g Pan, 1 Plátano." }
+                { title: "Batido Gainer", desc: "400ml Leche entera, 120g Avena, 1 Plátano, 30g Whey, 20g Crema cacahuete." }
             ],
             lunch: [
-                { title: "Opción A", desc: "200g Ternera grasa, 120g Pasta (peso en seco) con tomate, Queso rallado." }
+                { title: "Pasta", desc: "150g Pasta (peso crudo), 180g Carne picada mixta, 100g Tomate frito, Queso rallado." }
             ],
             snack: [
-                { title: "Merienda", desc: "Bocadillo grande de Lomo y Queso." },
-                { title: "Post-Entreno", desc: "100g Cereales azucarados + Batido Whey." }
+                { title: "Bocadillo", desc: "150g Pan Barra, 1 lata Atún aceite, 2 Huevos duros." },
+                { title: "Dulce", desc: "100g Cereales Corn Flakes, 30g Whey, 300ml Leche entera." }
             ],
             dinner: [
-                { title: "Opción A", desc: "200g Salmón, 300g Patata asada, Salsa mayonesa casera." }
+                { title: "Carne Roja", desc: "200g Entrecot o Chuleta, 350g Patata frita (airfryer) o asada, Salsa." }
             ]
         }
     }
 };
 
+// GENERADOR AUTOMÁTICO
 export const generateDiets = () => {
     const diets = [];
     let idCounter = 1;
 
-    // Generamos MUCHAS variantes (Saltos de 100kcal)
-    const ranges = [
-        { type: 'deficit', start: 1400, end: 2400, step: 100, cat: "Déficit" },
-        { type: 'classic', start: 2200, end: 4000, step: 150, cat: "Volumen" },
-        { type: 'hardgainer', start: 3000, end: 5000, step: 200, cat: "Volumen" },
+    // 1. GENERAR VARIANTES MATEMÁTICAS
+    // Definimos qué rangos queremos cubrir
+    const configs = [
+        { type: 'deficit', start: 1200, end: 2400, step: 100 }, // De 1200 a 2400 de 100 en 100
+        { type: 'classic', start: 2000, end: 4000, step: 200 }, // Volumen clásico
+        { type: 'hardgainer', start: 3000, end: 5000, step: 250 } // Volumen alto
     ];
 
-    // 1. Generar dietas con KCAL fijas
-    ranges.forEach(range => {
-        const template = templates[range.type];
-        for (let kcal = range.start; kcal <= range.end; kcal += range.step) {
+    configs.forEach(cfg => {
+        const base = baseTemplates[cfg.type];
+        
+        for (let targetKcal = cfg.start; targetKcal <= cfg.end; targetKcal += cfg.step) {
+            // Factor de escala: Si quiero 3000 y la base es 2500 -> Ratio = 1.2
+            const ratio = targetKcal / base.baseKcal;
+
+            // Clonar y escalar el plan
+            const scaledPlan = { ...base.plan };
+            // Recorrer comidas (breakfast, lunch...)
+            for (const mealKey in scaledPlan) {
+                scaledPlan[mealKey] = scaledPlan[mealKey].map(opt => ({
+                    title: opt.title,
+                    desc: scaleString(opt.desc, ratio) // AQUÍ OCURRE LA MAGIA
+                }));
+            }
+
             diets.push({
-                id: `diet-${idCounter++}`,
-                name: `${template.nameBase} (${kcal} kcal)`,
-                category: range.cat,
-                calories: kcal,
-                mealsPerDay: template.mealsPerDay,
-                macros: template.macros,
+                id: `diet-${cfg.type}-${targetKcal}`,
+                name: `${base.nameBase} (${targetKcal} kcal)`,
+                category: base.cat,
+                calories: targetKcal,
+                mealsPerDay: base.meals,
+                macros: base.macros,
                 isAdLibitum: false,
-                description: template.description + ` Ajustada a ${kcal} calorías (aprox).`,
-                plan: template.plan // En una app real, escalaríamos gramos aquí matemáticamente
+                description: base.desc + ` Cantidades ajustadas matemáticamente para ${targetKcal} kcal.`,
+                plan: scaledPlan
             });
         }
     });
 
-    // 2. Generar dietas AD LIBITUM (Sin kcal, variantes de estrategia)
-    // Anti inflamatoria
+    // 2. AÑADIR DIETAS MANUALES (Ad Libitum, Anti-inflamatoria)
+    // Estas NO se escalan, son cualitativas
     diets.push({
-        id: `diet-${idCounter++}`,
-        name: "NDP Anti-Inflamatoria (Estricta)",
-        category: "Salud",
-        calories: "Saciedad",
+        id: 'anti-inflam-1',
+        name: 'NDP Anti-Inflamatoria (Saciedad)',
+        category: 'Salud',
+        calories: 'Variable',
         mealsPerDay: 3,
-        macros: templates.antiinflamatorio.macros,
+        macros: { p: 30, c: 20, f: 50 },
         isAdLibitum: true,
-        description: "Protocolo estricto autoinmune. Sin kcal fijas.",
-        plan: templates.antiinflamatorio.plan
-    });
-    
-    // Low Carb Ad Libitum
-    diets.push({
-        id: `diet-${idCounter++}`,
-        name: "NDP Low Carb (Ad Libitum)",
-        category: "Déficit",
-        calories: "Saciedad",
-        mealsPerDay: 3,
-        macros: { p:40, c:10, f:50 },
-        isAdLibitum: true,
-        description: "Comer solo proteínas y grasas hasta saciarse. Verdura ilimitada.",
+        description: "Protocolo para salud digestiva y autoinmune. Sin contar calorías, comer hasta saciedad real.",
         plan: {
-            breakfast: [{ title:"Opción", desc:"Huevos y Bacon"}],
-            lunch: [{ title:"Opción", desc:"Carne grasa y verduras verdes"}],
-            dinner: [{ title:"Opción", desc:"Pescado y ensalada con aguacate"}]
+            breakfast: [{title: "Ayuno o Grasa", desc: "Idealmente Ayuno. Si hay hambre: Huevos revueltos con Ghee y Aguacate (Sin pan)."}],
+            lunch: [{title: "Proteína + Verde", desc: "200-250g Carne roja (pasto) o Pescado azul. Verduras crucíferas. Aceite de Oliva abundante."}],
+            dinner: [{title: "Carb Backloading", desc: "Pescado blanco o Mariscos. Acompañar de Boniato, Yuca o Plátano Macho (cocinado y enfriado)."}]
+        }
+    });
+
+    diets.push({
+        id: 'keto-strict-1',
+        name: 'NDP Keto Strict (Saciedad)',
+        category: 'Déficit',
+        calories: 'Variable',
+        mealsPerDay: 3,
+        macros: { p: 25, c: 5, f: 70 },
+        isAdLibitum: true,
+        description: "Cetosis nutricional (<30g carbs). El cuerpo usa grasa como energía.",
+        plan: {
+            breakfast: [{title: "Keto Clásico", desc: "Huevos fritos con Bacon y medio Aguacate."}],
+            lunch: [{title: "Grasa Alta", desc: "Muslos de pollo (con piel) asados + Brócoli con queso cheddar fundido."}],
+            dinner: [{title: "Pescado Graso", desc: "Salmón al horno con mantequilla de hierbas y espinacas."}]
         }
     });
 
