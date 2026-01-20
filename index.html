@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nutri Data Pro | Panel de Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nutri Data Pro | App</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
@@ -16,24 +16,39 @@
         <div class="blob blob-2"></div>
     </div>
 
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="overlay" onclick="toggleSidebar()"></div>
+
     <div class="app-container">
-        <aside class="sidebar glass-panel">
+        <aside class="sidebar glass-panel" id="sidebar">
             <div class="logo">
                 <h2>NUTRI<span class="highlight">DATA</span>PRO</h2>
             </div>
+            
             <nav>
-                <button class="nav-btn active" onclick="showSection('clients')">
+                <button class="nav-btn active" onclick="showSection('clients'); toggleSidebar()">
                     <i class="bi bi-people-fill"></i> Atletas
                 </button>
-                <button class="nav-btn" onclick="showSection('diets')">
+                <button class="nav-btn" onclick="showSection('diets'); toggleSidebar()">
                     <i class="bi bi-collection-fill"></i> Biblioteca NDP
                 </button>
             </nav>
+
             <div class="user-profile">
-                <div class="avatar">TR</div>
-                <div class="user-info">
-                    <span>Trainer Admin</span>
-                    <small>Cuenta Profesional</small>
+                <div id="authContainer" style="width:100%">
+                    <button id="btnLogin" class="btn-primary" style="width:100%; font-size:0.8rem;">
+                        <i class="bi bi-lock-fill"></i> Acceso Admin
+                    </button>
+                    <div id="userInfo" style="display:none; align-items:center; gap:10px;">
+                        <div class="avatar">AD</div>
+                        <div class="user-info">
+                            <span id="userEmailDisplay">Admin</span>
+                            <small style="color:var(--brand-red)">Modo Edición</small>
+                            <a href="#" onclick="logoutApp()" style="font-size:0.7rem; color:#666; display:block;">Cerrar Sesión</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </aside>
@@ -43,69 +58,83 @@
             <section id="clients-section" class="active-section">
                 <header class="glass-header">
                     <div>
-                        <h1>Mis Atletas</h1>
-                        <p class="subtitle">Gestión de planes asignados</p>
+                        <h1>Atletas</h1>
+                        <p class="subtitle">Seguimiento</p>
                     </div>
-                    <button class="btn-primary" onclick="openModal('clientModal')">+ Nuevo Atleta</button>
+                    <button class="btn-primary admin-only" onclick="openModal('clientModal')" style="display:none;">
+                        + Nuevo Atleta
+                    </button>
                 </header>
                 <div class="grid-container" id="clients-grid">
-                    <div class="loading-spinner">Cargando base de datos...</div>
+                    <div class="loading-spinner">Cargando datos...</div>
                 </div>
             </section>
 
             <section id="diets-section" style="display: none;">
                 <header class="glass-header wrap-header">
                     <div>
-                        <h1>Biblioteca NDP</h1>
-                        <p class="subtitle">Base de datos de Protocolos</p>
+                        <h1>Biblioteca</h1>
                     </div>
                     
                     <div class="toolbar">
                         <div class="search-box">
-                            <i class="bi bi-fire"></i>
-                            <input type="number" id="searchKcal" placeholder="Kcal aprox..." oninput="filterDiets()">
+                            <i class="bi bi-search"></i>
+                            <input type="text" id="searchKcal" placeholder="Buscar..." oninput="filterDiets()">
                         </div>
                         
                         <div class="search-box">
-                            <i class="bi bi-filter"></i>
                             <select id="searchType" onchange="filterDiets()">
-                                <option value="all">Todos los Tipos</option>
-                                <option value="Déficit">Déficit / Definición</option>
-                                <option value="Mantenimiento">Mantenimiento</option>
-                                <option value="Volumen">Volumen / Ganancia</option>
-                                <option value="Salud">Salud / Paleo / Keto</option>
+                                <option value="all">Filtro: Todos</option>
+                                <option value="Déficit">Déficit</option>
+                                <option value="Volumen">Volumen</option>
+                                <option value="Salud">Salud / Anti-inflam.</option>
                             </select>
                         </div>
 
-                        <button class="btn-danger" onclick="resetDatabaseManual()" title="Recargar las 80 dietas">
-                            <i class="bi bi-database-fill-down"></i> Cargar Pack Dietas
+                        <button class="btn-danger admin-only" onclick="resetDatabaseManual()" style="display:none;">
+                            <i class="bi bi-database-fill-down"></i> Reset DB
                         </button>
                     </div>
                 </header>
                 
-                <div class="grid-container" id="diets-grid">
-                    </div>
+                <div class="grid-container" id="diets-grid"></div>
             </section>
         </main>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content glass-panel" style="max-width:350px;">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2 style="text-align:center">Acceso Entrenador</h2>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="admin@nutridatapro.com" required>
+                <input type="password" id="loginPass" placeholder="Contraseña" required>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:15px">Entrar</button>
+            </form>
+        </div>
     </div>
 
     <div id="clientModal" class="modal">
         <div class="modal-content glass-panel">
             <span class="close" onclick="closeModal('clientModal')">&times;</span>
-            <h2>Registrar Atleta</h2>
+            <h2>Ficha Nuevo Atleta</h2>
             <form id="addClientForm">
-                <label>Nombre</label>
-                <input type="text" id="clientName" required>
+                <label>Nombre Completo</label>
+                <input type="text" id="clientName" placeholder="Ej: Francisco García" required>
+                
+                <label>Alias (Nombre App)</label>
+                <input type="text" id="clientAlias" placeholder="Ej: Fran G." required>
+                
                 <label>Email</label>
                 <input type="email" id="clientEmail" required>
+                
                 <label>Objetivo</label>
                 <select id="clientGoal">
                     <option value="Perdida Grasa">Definición</option>
                     <option value="Volumen">Volumen</option>
-                    <option value="Rendimiento">Rendimiento</option>
-                    <option value="Salud">Salud General</option>
+                    <option value="Salud">Salud</option>
                 </select>
-                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar</button>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Crear Ficha</button>
             </form>
         </div>
     </div>
@@ -113,8 +142,7 @@
     <div id="dietViewModal" class="modal">
         <div class="modal-content glass-panel large-modal" style="background:#0a0a0a;">
             <span class="close" onclick="closeModal('dietViewModal')">&times;</span>
-            <div id="diet-detail-content">
-                </div>
+            <div id="diet-detail-content"></div>
         </div>
     </div>
 
