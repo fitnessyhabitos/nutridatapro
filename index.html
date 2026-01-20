@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nutri Data Pro | App</title>
     
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+
     <link rel="stylesheet" href="css/style.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -12,25 +19,22 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
-    <div class="background-blobs">
-        <div class="blob blob-1"></div>
-    </div>
+    <div class="background-blobs"><div class="blob blob-1"></div></div>
 
     <div class="mobile-header">
-        <div class="logo">
-            <h2 style="color:white; font-weight:800; border-left:3px solid #D32F2F; padding-left:10px; font-size:1.2rem;">NUTRI<span style="color:#D32F2F">DATA</span></h2>
+        <div class="logo" style="display:flex; align-items:center; gap:10px;">
+            <img src="logo.png" alt="Logo" style="height:35px; width:auto;">
+            <h2 style="color:white; font-weight:800; margin:0; font-size:1.1rem;">NUTRI<span style="color:#D32F2F">DATA</span></h2>
         </div>
-        <button class="mobile-menu-btn" onclick="toggleSidebar()">
-            <i class="bi bi-list"></i>
-        </button>
+        <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
     </div>
 
     <div class="overlay" onclick="toggleSidebar()"></div>
 
     <div class="app-container">
         <aside class="sidebar glass-panel" id="sidebar">
-            <div class="logo">
+            <div class="logo" style="text-align:center; margin-bottom:30px;">
+                <img src="logo.png" alt="Logo" style="height:80px; margin-bottom:10px;">
                 <h2>NUTRI<span class="highlight">DATA</span>PRO</h2>
             </div>
             
@@ -53,34 +57,19 @@
         </aside>
 
         <main class="main-content">
-            
             <section id="clients-section" class="active-section">
                 <header class="glass-header">
-                    <div>
-                        <h1>Atletas</h1>
-                        <p class="subtitle">Seguimiento</p>
-                    </div>
-                    <button class="btn-primary admin-only" onclick="openModal('clientModal')" style="display:none;">
-                        + Nuevo Atleta
-                    </button>
+                    <div><h1>Atletas</h1><p class="subtitle">Seguimiento</p></div>
+                    <button class="btn-primary admin-only" onclick="openModal('clientModal')" style="display:none;">+ Nuevo Atleta</button>
                 </header>
-                <div class="grid-container" id="clients-grid">
-                    <div class="loading-spinner">Cargando datos...</div>
-                </div>
+                <div class="grid-container" id="clients-grid"><div class="loading-spinner">Cargando...</div></div>
             </section>
 
             <section id="diets-section" style="display: none;">
                 <header class="glass-header wrap-header">
-                    <div>
-                        <h1>Biblioteca</h1>
-                    </div>
-                    
+                    <div><h1>Biblioteca</h1></div>
                     <div class="toolbar">
-                        <div class="search-box">
-                            <i class="bi bi-search"></i>
-                            <input type="text" id="searchKcal" placeholder="Buscar..." oninput="filterDiets()">
-                        </div>
-                        
+                        <div class="search-box"><i class="bi bi-search"></i><input type="text" id="searchKcal" placeholder="Buscar..." oninput="filterDiets()"></div>
                         <div class="search-box">
                             <select id="searchType" onchange="filterDiets()">
                                 <option value="all">Filtro: Todos</option>
@@ -89,18 +78,21 @@
                                 <option value="Salud">Salud / Anti-inflam.</option>
                             </select>
                         </div>
-
-                        <button class="btn-danger admin-only" onclick="resetDatabaseManual()" style="display:none;">
-                            <i class="bi bi-database-fill-down"></i> Reset DB
-                        </button>
+                        <button class="btn-danger admin-only" onclick="resetDatabaseManual()" style="display:none;"><i class="bi bi-database-fill-down"></i> Reset DB</button>
                     </div>
                 </header>
-                
                 <div class="grid-container" id="diets-grid"></div>
             </section>
         </main>
     </div>
 
+    <div id="dietViewModal" class="modal">
+        <div class="modal-content glass-panel large-modal" style="background:#0a0a0a;">
+            <span class="close" onclick="closeModal('dietViewModal')">&times;</span>
+            <div id="diet-detail-content"></div>
+        </div>
+    </div>
+    
     <div id="loginModal" class="modal">
         <div class="modal-content glass-panel" style="max-width:350px;">
             <span class="close" onclick="closeModal('loginModal')">&times;</span>
@@ -118,30 +110,13 @@
             <span class="close" onclick="closeModal('clientModal')">&times;</span>
             <h2>Ficha Nuevo Atleta</h2>
             <form id="addClientForm">
-                <label>Nombre Completo</label>
-                <input type="text" id="clientName" placeholder="Ej: Francisco García" required>
-                
-                <label>Alias (Nombre App)</label>
-                <input type="text" id="clientAlias" placeholder="Ej: Fran G." required>
-                
-                <label>Email</label>
-                <input type="email" id="clientEmail" required>
-                
+                <label>Nombre Completo</label><input type="text" id="clientName" required>
+                <label>Alias</label><input type="text" id="clientAlias" required>
+                <label>Email</label><input type="email" id="clientEmail" required>
                 <label>Objetivo</label>
-                <select id="clientGoal">
-                    <option value="Perdida Grasa">Definición</option>
-                    <option value="Volumen">Volumen</option>
-                    <option value="Salud">Salud</option>
-                </select>
-                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Crear Ficha</button>
+                <select id="clientGoal"><option value="Perdida Grasa">Definición</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option></select>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Crear</button>
             </form>
-        </div>
-    </div>
-
-    <div id="dietViewModal" class="modal">
-        <div class="modal-content glass-panel large-modal" style="background:#0a0a0a;">
-            <span class="close" onclick="closeModal('dietViewModal')">&times;</span>
-            <div id="diet-detail-content"></div>
         </div>
     </div>
 
