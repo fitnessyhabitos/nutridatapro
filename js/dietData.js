@@ -145,20 +145,27 @@ export const generateDiets = () => {
     });
 
     // 2. AÑADIR DIETAS MANUALES (Ad Libitum, Anti-inflamatoria)
-    // Estas NO se escalan, son cualitativas
+    /// REEMPLAZA EL BLOQUE DE 'anti-inflam-1' POR ESTE:
     diets.push({
         id: 'anti-inflam-1',
-        name: 'NDP Anti-Inflamatoria (Saciedad)',
+        name: 'NDP Protocolo Growth (Anti-Inflamatoria)',
         category: 'Salud',
-        calories: 'Variable',
+        calories: 'Saciedad', // Ad Libitum según el PDF
         mealsPerDay: 3,
         macros: { p: 30, c: 20, f: 50 },
         isAdLibitum: true,
-        description: "Protocolo para salud digestiva y autoinmune. Sin contar calorías, comer hasta saciedad real.",
+        description: "Basado en Protocolo Growth Lab. Sin lectinas (NO tomate, pimiento, berenjena). Carb Backloading (Carbohidratos SOLO en la cena).",
         plan: {
-            breakfast: [{title: "Ayuno o Grasa", desc: "Idealmente Ayuno. Si hay hambre: Huevos revueltos con Ghee y Aguacate (Sin pan)."}],
-            lunch: [{title: "Proteína + Verde", desc: "200-250g Carne roja (pasto) o Pescado azul. Verduras crucíferas. Aceite de Oliva abundante."}],
-            dinner: [{title: "Carb Backloading", desc: "Pescado blanco o Mariscos. Acompañar de Boniato, Yuca o Plátano Macho (cocinado y enfriado)."}]
+            breakfast: [
+                { title: "Solo Proteína + Grasa", desc: "Huevos, Carne o Pescado + Aguacate o Aceitunas. CERO carbohidratos. Si usas nueces, SOLO Macadamias." },
+                { title: "Opción Ayuno", desc: "Solo Café negro, Té o Agua con sal y limón. Nada de comida sólida hasta el mediodía." }
+            ],
+            lunch: [
+                { title: "Prot + Grasa + Verde", desc: "Carne/Pescado + Verduras SIN semillas (Espinacas, Brócoli, Coliflor, Espárragos). Prohibido: Tomate, Pimiento, Berenjena." }
+            ],
+            dinner: [
+                { title: "Carga de Carbos (Backloading)", desc: "Proteína limpia + Almidones permitidos: Boniato, Yuca, Plátano Macho o Calabaza. (Ayuda a dormir)." }
+            ]
         }
     });
 
