@@ -20,7 +20,6 @@ let currentUser = null;
 let userData = null;
 let isAdmin = false;
 let dietToAssign = null;
-// ✅ CORREO ACTUALIZADO
 const ADMIN_EMAIL = "toni@nutridatapro.es"; 
 
 // --- AUTH ---
@@ -48,24 +47,22 @@ document.getElementById('registerForm').addEventListener('submit', async(e)=>{e.
 window.logoutApp=()=>signOut(auth);
 window.toggleAuthMode=()=>{const l=document.getElementById('loginBox'), r=document.getElementById('registerBox'); l.style.display=l.style.display==='none'?'block':'none'; r.style.display=r.style.display==='none'?'block':'none';};
 
-// --- VISUALIZADOR (GRÁFICO CON GRAMOS) ---
+// --- VISUALIZADOR DIETA (GRAFICO GRAMOS + FULLSCREEN) ---
 window.previewDietVisual = (diet) => {
-    // Abrir modal PANTALLA COMPLETA
-    document.getElementById('dietViewModal').style.display = 'flex';
-    
+    document.getElementById('dietViewModal').style.display = 'flex'; // Abrir modal full screen
     const container = document.getElementById('diet-detail-content');
     const chartId = `chart-${Math.random().toString(36).substr(2,9)}`;
     const guide = dietGuides[diet.category] || dietGuides["Volumen"];
     const kcalDisplay = diet.isAdLibitum ? 'SACIEDAD' : `${diet.calories} kcal`;
 
-    // Cálculo Gramos
+    // Calculo Gramos
     const total = parseInt(diet.calories) || 2000;
-    const pGrams = Math.round((total * (diet.macros.p/100)) / 4);
-    const cGrams = Math.round((total * (diet.macros.c/100)) / 4);
-    const fGrams = Math.round((total * (diet.macros.f/100)) / 9);
+    const pGrams = Math.round((total*(diet.macros.p/100))/4);
+    const cGrams = Math.round((total*(diet.macros.c/100))/4);
+    const fGrams = Math.round((total*(diet.macros.f/100))/9);
 
-    // Kcal por comida
-    const bk = Math.round(total * 0.25); const ln = Math.round(total * 0.35); const sn = Math.round(total * 0.15); const dn = Math.round(total * 0.25);
+    // Kcal Comida
+    const bk = Math.round(total*0.25); const ln = Math.round(total*0.35); const sn = Math.round(total*0.15); const dn = Math.round(total*0.25);
 
     let mealsHtml = '';
     const renderOptions = (opts) => opts.map((o,i) => `<div class="option-card"><div style="color:var(--text-muted); font-size:0.8rem; font-weight:800; margin-bottom:5px;">OPCIÓN ${String.fromCharCode(65+i)}</div><div style="color:#eee; line-height:1.4;">${o.desc}</div></div>`).join('');
@@ -76,7 +73,6 @@ window.previewDietVisual = (diet) => {
     if(diet.plan.snack) mealsHtml += `<div class="meal-section">${header('bi-apple','SNACK',sn)}${renderOptions(diet.plan.snack)}</div>`;
     if(diet.plan.dinner) mealsHtml += `<div class="meal-section">${header('bi-moon-stars-fill','CENA',dn)}${renderOptions(diet.plan.dinner)}</div>`;
 
-    // BOTÓN ASIGNAR (Visible solo Admin)
     const adminActionBtn = isAdmin ? `<div style="margin-top:30px; border-top:1px solid #333; padding-top:20px;"><button class="btn-primary" onclick='openClientSelector(${JSON.stringify(diet).replace(/'/g, "&apos;")})'>📲 ASIGNAR A ATLETA</button></div>` : '';
 
     container.innerHTML = `
@@ -119,22 +115,20 @@ window.previewDietVisual = (diet) => {
     }, 250);
 }
 
-// --- LOGICA ASIGNAR ---
+// --- ASIGNACIÓN ATLETA ---
 window.openClientSelector = async (diet) => {
     dietToAssign = diet; 
     const list = document.getElementById('clientSelectorList');
-    list.innerHTML = '<div class="loading-spinner">Cargando atletas...</div>';
+    list.innerHTML = '<div class="loading-spinner">Cargando...</div>';
     openModal('clientSelectorModal');
     
     const q = await getDocs(collection(db, "clientes"));
     list.innerHTML = '';
-    if(q.empty) { list.innerHTML = '<p>No hay atletas registrados.</p>'; return; }
+    if(q.empty) { list.innerHTML = '<p>No hay atletas.</p>'; return; }
 
     q.forEach(docSnap => {
         const c = docSnap.data();
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.style.marginBottom = '10px'; card.style.cursor = 'pointer'; card.style.borderLeft = '4px solid #333';
+        const card = document.createElement('div'); card.className = 'card'; card.style.marginBottom='10px'; card.style.cursor='pointer'; card.style.borderLeft='4px solid #333';
         card.onclick = () => assignDietFromModal(docSnap.id, c.alias);
         card.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><div><h4 style="margin:0; color:white;">${c.alias}</h4><small style="color:#888;">${c.name}</small></div><div style="text-align:right;"><span class="status-badge" style="background:#222;">${c.goal}</span><br><small style="color:var(--brand-red);">${c.currentDietName ? 'Tiene Plan' : 'Sin Plan'}</small></div></div>`;
         list.appendChild(card);
@@ -142,64 +136,45 @@ window.openClientSelector = async (diet) => {
 };
 
 window.assignDietFromModal = async (clientId, clientName) => {
-    if(!dietToAssign) return;
-    if(!confirm(`¿Asignar "${dietToAssign.name}" a ${clientName}?`)) return;
-    
+    if(!dietToAssign || !confirm(`¿Asignar "${dietToAssign.name}" a ${clientName}?`)) return;
     const clientRef = doc(db, "clientes", clientId);
-    const clientSnap = await getDoc(clientRef);
-    const history = clientSnap.data().dietHistory || [];
-    
-    history.unshift({ name: dietToAssign.name, date: new Date().toLocaleDateString(), category: dietToAssign.category });
-    await updateDoc(clientRef, { currentDietName: dietToAssign.name, currentDietData: dietToAssign, dietHistory: history });
-    
-    alert(`✅ Asignado a ${clientName}`);
-    closeModal('clientSelectorModal'); closeModal('dietViewModal');
+    const h = (await getDoc(clientRef)).data().dietHistory || [];
+    h.unshift({ name: dietToAssign.name, date: new Date().toLocaleDateString(), category: dietToAssign.category });
+    await updateDoc(clientRef, { currentDietName: dietToAssign.name, currentDietData: dietToAssign, dietHistory: h });
+    alert(`✅ Asignado a ${clientName}`); closeModal('clientSelectorModal'); closeModal('dietViewModal');
 };
 
 // --- CREADOR MANUAL ---
 window.createManualDiet = async (e) => {
     e.preventDefault();
-    const name = document.getElementById('mdName').value;
-    const kcal = document.getElementById('mdKcal').value;
-    const cat = document.getElementById('mdCat').value;
-
-    const getOptions = (prefix) => {
-        const opts = [];
-        const a = document.getElementById(prefix + '_A').value;
-        const b = document.getElementById(prefix + '_B').value;
-        const c = document.getElementById(prefix + '_C').value;
-        if(a) opts.push({ title: "Opción A", desc: a });
-        if(b) opts.push({ title: "Opción B", desc: b });
-        if(c) opts.push({ title: "Opción C", desc: c });
-        if(opts.length === 0) opts.push({ title: "Opción Única", desc: "A elección." });
-        return opts;
+    const getOpt = (p) => {
+        const o = []; const a=document.getElementById(p+'_A').value; const b=document.getElementById(p+'_B').value; const c=document.getElementById(p+'_C').value;
+        if(a)o.push({title:"A",desc:a}); if(b)o.push({title:"B",desc:b}); if(c)o.push({title:"C",desc:c});
+        return o.length?o:[{title:"Única",desc:"Según macros."}];
     };
-
     const manualDiet = {
-        name, category: cat, calories: kcal, mealsPerDay: 3, isAdLibitum: false, description: "Plan personalizado.", macros: {p:30,c:40,f:30},
-        plan: { breakfast: getOptions('mdBk'), lunch: getOptions('mdLn'), dinner: getOptions('mdDn'), snack: [] }
+        name: document.getElementById('mdName').value, category: document.getElementById('mdCat').value, calories: document.getElementById('mdKcal').value,
+        mealsPerDay: 3, isAdLibitum: false, description: "Plan manual.", macros: {p:30,c:40,f:30},
+        plan: { breakfast: getOpt('mdBk'), lunch: getOpt('mdLn'), dinner: getOpt('mdDn'), snack: [] }
     };
-
-    try { await addDoc(collection(db, "diet_templates"), manualDiet); closeModal('manualDietModal'); alert("✅ Guardada."); loadDietsAdmin(); } catch (error) { alert("Error: " + error.message); }
+    try { await addDoc(collection(db, "diet_templates"), manualDiet); closeModal('manualDietModal'); alert("Guardada."); loadDietsAdmin(); } catch (e) { alert(e.message); }
 };
 
-// ... RESTO DE FUNCIONES (ADMIN/RESET) ...
+// --- RESTO ADMIN ---
 window.resetDatabaseManual = async () => {
-    if(!isAdmin) return alert("Solo admin");
-    if(!confirm("⚠️ Resetear DB?")) return;
-    const g=document.getElementById('diets-grid'); g.innerHTML='<div class="loading-spinner">Generando...</div>';
+    if(!isAdmin) return alert("Solo admin"); if(!confirm("⚠️ Resetear DB?")) return;
     try {
         const q=await getDocs(collection(db,"diet_templates")); const p=[]; q.forEach(d=>p.push(deleteDoc(doc(db,"diet_templates",d.id)))); await Promise.all(p);
         const bs=50; for(let i=0; i<dietsDatabase.length; i+=bs){const ch=dietsDatabase.slice(i,i+bs); await Promise.all(ch.map(d=>addDoc(collection(db,"diet_templates"),d)));}
         alert("Hecho"); loadDietsAdmin();
-    } catch(e) { alert("Error: "+e.message); }
+    } catch(e) { alert(e.message); }
 };
 
 function initAdminDashboard() { document.getElementById('adminNav').style.display='block'; showAdminSection('clients'); }
 window.showAdminSection = (id) => { document.getElementById('adminView').style.display='block'; document.getElementById('athleteView').style.display='none'; ['clients','diets','inbox'].forEach(s=>document.getElementById(s+'-section').style.display='none'); document.getElementById(id+'-section').style.display='block'; if(id==='clients')renderClientsAdmin(); if(id==='diets')loadDietsAdmin(); if(id==='inbox')renderInbox(); };
 async function loadDietsAdmin() { const g=document.getElementById('diets-grid'); g.innerHTML='Cargando...'; const q=await getDocs(collection(db,"diet_templates")); window.allDietsCache=[]; q.forEach(d=>window.allDietsCache.push({firestoreId:d.id,...d.data()})); renderDietsListAdmin(window.allDietsCache); }
 function renderDietsListAdmin(l) { const g=document.getElementById('diets-grid'); g.innerHTML=''; l.sort((a,b)=>(parseInt(a.calories)||9999)-(parseInt(b.calories)||9999)); l.forEach(d=>{ let c='#333'; if(d.category==='Déficit')c='#D32F2F'; if(d.category==='Volumen')c='#2E7D32'; if(d.category==='Salud')c='#F57C00'; if(d.category==='Senior')c='#0288D1'; g.innerHTML+=`<div class="card"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span class="status-badge" style="background:${c}">${d.category}</span><span class="status-badge" style="border:1px solid #555">${d.isAdLibitum?'SACIEDAD':d.calories+' kcal'}</span></div><h3>${d.name}</h3><p>${d.description.substring(0,50)}...</p><button class="btn-assign" onclick='previewDietVisual(${JSON.stringify(d).replace(/'/g,"&apos;")});'><i class="bi bi-eye"></i> Ver Plan</button></div>`; }); }
-window.filterDiets = () => { const term = document.getElementById('searchKcal').value.toLowerCase(); const cat = document.getElementById('filterCategory') ? document.getElementById('filterCategory').value : 'all'; if(!window.allDietsCache) return; const filtered = window.allDietsCache.filter(d => { const matchText = d.name.toLowerCase().includes(term) || d.calories.toString().includes(term); const matchCat = cat === 'all' || d.category === cat; return matchText && matchCat; }); renderDietsListAdmin(filtered); };
+window.filterDiets = () => { const t=document.getElementById('searchKcal').value.toLowerCase(); const cat=document.getElementById('filterCategory').value; if(!window.allDietsCache)return; renderDietsListAdmin(window.allDietsCache.filter(d=>(d.name.toLowerCase().includes(t)||d.calories.toString().includes(t))&&(cat==='all'||d.category===cat))); };
 async function renderClientsAdmin(){ const g=document.getElementById('clients-grid'); g.innerHTML='Cargando...'; const q=await getDocs(collection(db,"clientes")); g.innerHTML=''; q.forEach(d=>{const c=d.data(); g.innerHTML+=`<div class="card"><h3>${c.alias}</h3><p>${c.name}</p><small style="color:#888">Plan: <span style="color:var(--brand-red)">${c.currentDietName||'Ninguno'}</span></small><button class="btn-assign" onclick="openDietAssignModal('${d.id}','${c.alias}')">Asignar</button></div>`;}); }
 window.openDietAssignModal=async(id,alias)=>{const n=prompt("Nombre exacto:"); if(n){const q=query(collection(db,"diet_templates"),where("name","==",n)); const s=await getDocs(q); if(!s.empty){const d=s.docs[0].data(); await updateDoc(doc(db,"clientes",id),{currentDietName:d.name,currentDietData:d, dietHistory:(await getDoc(doc(db,"clientes",id))).data().dietHistory||[]}); alert("Asignada"); renderClientsAdmin();}else alert("No encontrada");}};
 async function renderInbox() { const l=document.getElementById('inbox-list'); l.innerHTML='Cargando...'; const q=query(collection(db,"notas"),orderBy("date","desc")); const s=await getDocs(q); l.innerHTML=s.docs.map(d=>{const n=d.data(); return `<div class="card" style="margin-bottom:10px; border-left:4px solid ${n.read?'#333':'var(--brand-red)'}"><strong>${n.author}</strong><p>${n.text}</p>${!n.read?`<button class="btn-primary" onclick="markRead('${d.id}')" style="padding:5px; font-size:0.7rem">Leído</button>`:''}</div>`}).join(''); }
