@@ -68,7 +68,6 @@ const baseTemplates = {
     classic: {
         nameBase: "NDP Classic Hypertrophy",
         cat: "Volumen",
-        // BENEFICIO CLARO EN LA DESCRIPCIÓN:
         desc: "BENEFICIO: Maximiza la ganancia de masa muscular limpia minimizando la acumulación de grasa. Ideal para estética corporal.",
         baseKcal: 2500, 
         macros: { p: 30, c: 50, f: 20 },

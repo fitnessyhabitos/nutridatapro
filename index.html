@@ -2,12 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nutri Data Pro | App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Nutri Data Pro</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png"> <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
 
     <link rel="stylesheet" href="css/style.css">
@@ -16,17 +17,20 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="background-blobs"><div class="blob blob-1"></div></div>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="glass-overlay"></div> </div>
 
-    <div class="mobile-header">
+    <div class="mobile-header glass-panel">
         <div class="logo" style="display:flex; align-items:center; gap:10px;">
-            <img src="logo.png" alt="Logo" style="height:30px; width:auto;">
-            <h2 style="color:white; font-weight:800; margin:0; font-size:1.1rem;">NUTRI<span style="color:#D32F2F">DATA</span></h2>
+            <img src="logo.png" alt="Logo" style="height:32px; width:auto; border-radius:6px;">
+            <h2 style="color:white; font-weight:800; margin:0; font-size:1.1rem; letter-spacing:-0.5px;">NUTRI<span style="color:var(--brand-red)">DATA</span></h2>
         </div>
         <div style="display:flex; gap:15px; align-items:center;">
-            <div id="adminNotifIcon" style="display:none; position:relative; color:white; font-size:1.2rem;">
+            <div id="adminNotifIcon" style="display:none; position:relative; color:white; font-size:1.3rem;">
                 <i class="bi bi-bell-fill"></i>
-                <span id="notifDot" style="display:none; position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:red; border-radius:50%;"></span>
+                <span id="notifDot"></span>
             </div>
             <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
         </div>
@@ -36,8 +40,8 @@
 
     <div class="app-container">
         <aside class="sidebar glass-panel" id="sidebar">
-            <div class="logo" style="text-align:center; margin-bottom:30px;">
-                <img src="logo.png" alt="Logo" style="height:80px; margin-bottom:10px;">
+            <div class="logo" style="text-align:center; margin-bottom:40px; margin-top:20px;">
+                <img src="logo.png" alt="Logo" style="height:90px; margin-bottom:15px; border-radius:18px; box-shadow: 0 8px 20px rgba(0,0,0,0.3);">
                 <h2>NUTRI<span class="highlight">DATA</span>PRO</h2>
             </div>
             
@@ -56,7 +60,7 @@
 
             <div class="user-profile">
                 <div id="authContainer" style="width:100%">
-                    <button id="btnLogin" class="btn-primary" style="width:100%; font-size:0.8rem;">Iniciar Sesión</button>
+                    <button id="btnLogin" class="btn-primary" style="width:100%; font-size:0.9rem;">Acceder</button>
                 </div>
             </div>
         </aside>
@@ -76,8 +80,11 @@
                     <header class="glass-header wrap-header">
                         <h1>Biblioteca NDP</h1>
                         <div class="toolbar">
-                            <input type="text" id="searchKcal" placeholder="Buscar..." oninput="filterDiets()" style="padding:10px; border-radius:5px; border:1px solid #333; background:#111; color:white;">
-                            <button class="btn-danger" onclick="resetDatabaseManual()">Reset DB</button>
+                            <div class="search-box glass-input">
+                                <i class="bi bi-search"></i>
+                                <input type="text" id="searchKcal" placeholder="Buscar dieta..." oninput="filterDiets()">
+                            </div>
+                            <button class="btn-danger" onclick="resetDatabaseManual()"><i class="bi bi-database-fill-down"></i> Reset DB</button>
                         </div>
                     </header>
                     <div class="grid-container" id="diets-grid"></div>
@@ -93,8 +100,8 @@
                 <section id="myPlan-section">
                     <header class="glass-header">
                         <div>
-                            <h1 id="athleteGreeting">Hola Atleta</h1>
-                            <p class="subtitle">Este es tu protocolo actual</p>
+                            <h1 id="athleteGreeting" style="font-size:1.8rem;">Hola Atleta</h1>
+                            <p class="subtitle">Tu protocolo de rendimiento actual</p>
                         </div>
                     </header>
                     <div id="myCurrentDietContainer"></div>
@@ -106,17 +113,18 @@
                 </section>
 
                 <section id="history-section" style="display:none;">
-                    <header class="glass-header"><h1>Historial de Cambios</h1></header>
+                    <header class="glass-header"><h1>Historial de Planes</h1></header>
                     <div id="historyList" class="grid-container"></div>
                 </section>
 
                 <section id="notes-section" style="display:none;">
                     <header class="glass-header"><h1>Diario / Feedback</h1></header>
-                    <div class="card" style="margin-bottom:20px;">
-                        <h3>Enviar nota a mi entrenador</h3>
-                        <textarea id="athleteNoteInput" rows="4" placeholder="Ej: Me siento con poca energía en el entreno..." style="width:100%; background:#222; border:1px solid #333; color:white; padding:10px; border-radius:6px; margin-top:10px;"></textarea>
-                        <button class="btn-primary" onclick="sendAthleteNote()" style="margin-top:10px; width:100%;">Enviar Nota</button>
+                    <div class="card glass-panel" style="margin-bottom:25px;">
+                        <h3 style="margin-bottom:15px;">Enviar nota al entrenador</h3>
+                        <textarea id="athleteNoteInput" rows="4" placeholder="Ej: Sensaciones, dudas sobre una comida..." class="glass-input" style="width:100%; resize:none;"></textarea>
+                        <button class="btn-primary" onclick="sendAthleteNote()" style="margin-top:15px; width:100%;"><i class="bi bi-send-fill"></i> Enviar Nota</button>
                     </div>
+                    <h3 style="margin-bottom:15px; color:#888;">Notas Anteriores</h3>
                     <div id="myNotesHistory"></div>
                 </section>
             </div>
@@ -125,39 +133,40 @@
     </div>
 
     <div id="loginModal" class="modal">
-        <div class="modal-content glass-panel" style="max-width:350px;">
+        <div class="modal-content glass-panel" style="max-width:380px; text-align:center;">
             <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <img src="logo.png" style="height:60px; margin-bottom:20px; border-radius:12px;">
             
             <div id="loginBox">
-                <h2 style="text-align:center">Acceso NDP</h2>
+                <h2 style="margin-bottom:25px;">Acceso NDP</h2>
                 <form id="loginForm">
-                    <input type="email" id="loginEmail" placeholder="Email" required>
-                    <input type="password" id="loginPass" placeholder="Contraseña" required>
-                    <button type="submit" class="btn-primary" style="width:100%; margin-top:15px">Entrar</button>
+                    <input type="email" id="loginEmail" placeholder="Email" class="glass-input" required>
+                    <input type="password" id="loginPass" placeholder="Contraseña" class="glass-input" required>
+                    <button type="submit" class="btn-primary" style="width:100%; margin-top:20px; padding:12px;">Entrar</button>
                 </form>
-                <p style="text-align:center; font-size:0.8rem; margin-top:15px; color:#888;">
-                    ¿Eres atleta nuevo? <a href="#" onclick="toggleAuthMode()" style="color:var(--brand-red)">Regístrate aquí</a>
+                <p style="font-size:0.85rem; margin-top:25px; color:#aaa;">
+                    ¿Eres atleta nuevo? <a href="#" onclick="toggleAuthMode()" style="color:var(--brand-red); font-weight:600;">Regístrate aquí</a>
                 </p>
             </div>
 
             <div id="registerBox" style="display:none;">
-                <h2 style="text-align:center">Registro Atleta</h2>
+                <h2 style="margin-bottom:25px;">Registro Atleta</h2>
                 <form id="registerForm">
-                    <input type="text" id="regName" placeholder="Nombre Completo" required>
-                    <input type="text" id="regAlias" placeholder="Alias (Nombre visible)" required>
-                    <input type="email" id="regEmail" placeholder="Email" required>
-                    <input type="password" id="regPass" placeholder="Crear Contraseña" required>
-                    <button type="submit" class="btn-primary" style="width:100%; margin-top:15px">Crear Cuenta</button>
+                    <input type="text" id="regName" placeholder="Nombre Completo" class="glass-input" required>
+                    <input type="text" id="regAlias" placeholder="Alias (Visible en App)" class="glass-input" required>
+                    <input type="email" id="regEmail" placeholder="Email" class="glass-input" required>
+                    <input type="password" id="regPass" placeholder="Crear Contraseña" class="glass-input" required>
+                    <button type="submit" class="btn-primary" style="width:100%; margin-top:20px; padding:12px;">Crear Cuenta</button>
                 </form>
-                <p style="text-align:center; font-size:0.8rem; margin-top:15px; color:#888;">
-                    ¿Ya tienes cuenta? <a href="#" onclick="toggleAuthMode()" style="color:var(--brand-red)">Inicia sesión</a>
+                <p style="font-size:0.85rem; margin-top:25px; color:#aaa;">
+                    ¿Ya tienes cuenta? <a href="#" onclick="toggleAuthMode()" style="color:var(--brand-red); font-weight:600;">Inicia sesión</a>
                 </p>
             </div>
         </div>
     </div>
 
     <div id="dietViewModal" class="modal">
-        <div class="modal-content glass-panel large-modal" style="background:#0a0a0a;">
+        <div class="modal-content glass-panel large-modal">
             <span class="close" onclick="closeModal('dietViewModal')">&times;</span>
             <div id="diet-detail-content"></div>
         </div>
@@ -168,12 +177,12 @@
             <span class="close" onclick="closeModal('clientModal')">&times;</span>
             <h2>Ficha Nuevo Atleta</h2>
             <form id="addClientForm">
-                <label>Nombre</label><input type="text" id="clientName" required>
-                <label>Alias</label><input type="text" id="clientAlias" required>
-                <label>Email</label><input type="email" id="clientEmail" required>
+                <label>Nombre</label><input type="text" id="clientName" class="glass-input" required>
+                <label>Alias</label><input type="text" id="clientAlias" class="glass-input" required>
+                <label>Email</label><input type="email" id="clientEmail" class="glass-input" required>
                 <label>Objetivo</label>
-                <select id="clientGoal"><option value="Perdida Grasa">Definición</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option></select>
-                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Crear</button>
+                <select id="clientGoal" class="glass-input"><option value="Perdida Grasa">Definición</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option></select>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Crear Ficha</button>
             </form>
         </div>
     </div>
