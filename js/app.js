@@ -21,7 +21,7 @@ let currentUser = null;
 let userData = null; // Datos del doc 'clientes'
 let isAdmin = false;
 let currentChart = null;
-const ADMIN_EMAIL = "toni@nutridatapro.com"; 
+const ADMIN_EMAIL = "toni@nutridatapro.es"; 
 
 // ==========================================
 // 1. SISTEMA DE SESIÓN (LOGIN/REGISTRO)
@@ -398,3 +398,4 @@ window.toggleSidebar = () => { document.getElementById('sidebar').classList.togg
 window.closeModal = (id) => document.getElementById(id).style.display = 'none';
 
 window.openModal = (id) => document.getElementById(id).style.display = 'block';
+
