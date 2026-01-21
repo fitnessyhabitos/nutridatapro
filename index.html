@@ -4,267 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Nutri Data Pro</title>
-    
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#000000">
-
     <link rel="stylesheet" href="css/style.css">
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <div class="background-blobs">
         <div class="blob blob-1"></div>
-        <div class="glass-overlay"></div>
     </div>
 
-    <div class="mobile-header glass-panel">
-        <div class="logo" style="display:flex; align-items:center; gap:10px;">
-            <img src="logo.png" alt="Logo" style="height:32px; width:auto; border-radius:6px;">
-            <h2 style="color:white; font-weight:800; margin:0; font-size:1.1rem; letter-spacing:-0.5px;">NUTRI<span style="color:var(--brand-red)">DATA</span></h2>
+    <div class="mobile-header" style="display:none;"> <div class="logo" style="display:flex; align-items:center; gap:10px;">
+            <img src="logo.png" style="height:30px;">
+            <h3 style="margin:0; color:white;">NUTRI<span style="color:var(--brand-red)">DATA</span></h3>
         </div>
-        <div style="display:flex; gap:15px; align-items:center;">
-            <div id="adminNotifIcon" style="display:none; position:relative; color:white; font-size:1.3rem;">
-                <i class="bi bi-bell-fill"></i>
-                <span id="notifDot"></span>
-            </div>
-            <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
-        </div>
+        <button class="mobile-menu-btn" onclick="toggleSidebar()" style="color:white; background:none; border:none; font-size:1.5rem;"><i class="bi bi-list"></i></button>
     </div>
-
+    
     <div class="overlay" onclick="toggleSidebar()"></div>
 
     <div class="app-container">
-        
-        <aside class="sidebar glass-panel" id="sidebar">
-            <div class="logo" style="text-align:center; margin-bottom:40px; margin-top:20px;">
-                <img src="logo.png" alt="Logo" style="height:90px; margin-bottom:15px; border-radius:18px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);">
-                <h2>NUTRI<span class="highlight">DATA</span>PRO</h2>
+        <aside class="sidebar" id="sidebar">
+            <div style="text-align:center; margin-bottom:30px;">
+                <img src="logo.png" style="height:80px; margin-bottom:10px;">
+                <h2 style="margin:0; color:white;">NUTRI<span style="color:var(--brand-red)">DATA</span>PRO</h2>
             </div>
             
             <nav id="adminNav" style="display:none;">
-                <button class="nav-btn active" onclick="showAdminSection('clients'); toggleSidebar()"><i class="bi bi-people-fill"></i> Atletas</button>
-                <button class="nav-btn" onclick="showAdminSection('diets'); toggleSidebar()"><i class="bi bi-collection-fill"></i> Biblioteca</button>
-                <button class="nav-btn" onclick="showAdminSection('inbox'); toggleSidebar()"><i class="bi bi-chat-left-text-fill"></i> Mensajes</button>
+                <button class="nav-btn active" onclick="showAdminSection('clients'); toggleSidebar()"><i class="bi bi-people"></i> Atletas</button>
+                <button class="nav-btn" onclick="showAdminSection('diets'); toggleSidebar()"><i class="bi bi-collection"></i> Biblioteca</button>
+                <button class="nav-btn" onclick="showAdminSection('inbox'); toggleSidebar()"><i class="bi bi-chat-left"></i> Mensajes</button>
             </nav>
 
             <nav id="athleteNav" style="display:none;">
-                <button class="nav-btn active" onclick="showAthleteSection('myPlan'); toggleSidebar()"><i class="bi bi-calendar-check-fill"></i> Mi Plan Actual</button>
-                <button class="nav-btn" onclick="showAthleteSection('evolution'); toggleSidebar()"><i class="bi bi-graph-up-arrow"></i> Mi Evolución</button>
-                <button class="nav-btn" onclick="showAthleteSection('education'); toggleSidebar()"><i class="bi bi-book-half"></i> Guía & Tips</button>
+                <button class="nav-btn active" onclick="showAthleteSection('myPlan'); toggleSidebar()"><i class="bi bi-calendar-check"></i> Mi Plan</button>
+                <button class="nav-btn" onclick="showAthleteSection('education'); toggleSidebar()"><i class="bi bi-book"></i> Guía & Tips</button>
+                <button class="nav-btn" onclick="showAthleteSection('evolution'); toggleSidebar()"><i class="bi bi-graph-up"></i> Evolución</button>
                 <button class="nav-btn" onclick="showAthleteSection('history'); toggleSidebar()"><i class="bi bi-clock-history"></i> Historial</button>
-                <button class="nav-btn" onclick="showAthleteSection('notes'); toggleSidebar()"><i class="bi bi-pencil-square"></i> Mis Notas</button>
+                <button class="nav-btn" onclick="showAthleteSection('notes'); toggleSidebar()"><i class="bi bi-pencil"></i> Notas</button>
             </nav>
 
-            <div class="user-profile" style="margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);">
-                <div id="authContainer" style="width:100%">
-                    <button id="btnLogin" class="btn-primary" style="width:100%; font-size:0.9rem;">Acceder</button>
+            <div style="margin-top:auto;">
+                <div id="authContainer">
+                    <button class="btn-primary" onclick="openModal('loginModal')">Acceder</button>
                 </div>
             </div>
         </aside>
 
         <main class="main-content">
-            
             <div id="adminView" style="display:none;">
-                
                 <section id="clients-section">
-                    <header class="glass-header">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                         <h1>Atletas Activos</h1>
-                        <button class="btn-primary" onclick="openModal('clientModal')">+ Nuevo Atleta</button>
-                    </header>
+                        <button class="btn-primary" onclick="openModal('clientModal')" style="width:auto;">+ Nuevo</button>
+                    </div>
                     <div class="grid-container" id="clients-grid"></div>
                 </section>
-
                 <section id="diets-section" style="display:none;">
-                    <header class="glass-header wrap-header">
-                        <h1>Biblioteca NDP</h1>
-                        <div class="toolbar">
-                            <div class="search-box glass-input" style="width:auto; display:flex; align-items:center;">
-                                <i class="bi bi-search"></i>
-                                <input type="text" id="searchKcal" placeholder="Buscar dieta..." oninput="filterDiets()" style="border:none;">
-                            </div>
-                            <button class="btn-danger" onclick="resetDatabaseManual()"><i class="bi bi-database-fill-down"></i> Reset DB</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+                        <h1>Biblioteca</h1>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="searchKcal" class="glass-input" placeholder="Buscar..." oninput="filterDiets()" style="width:150px; margin:0;">
+                            <button class="btn-primary" onclick="resetDatabaseManual()" style="width:auto; background:#333;">Reset DB</button>
                         </div>
-                    </header>
+                    </div>
                     <div class="grid-container" id="diets-grid"></div>
                 </section>
-
                 <section id="inbox-section" style="display:none;">
-                    <header class="glass-header"><h1>Buzón de Atletas</h1></header>
-                    <div id="inbox-list" class="list-container"></div>
+                    <h1>Mensajes</h1>
+                    <div id="inbox-list"></div>
                 </section>
             </div>
 
             <div id="athleteView" style="display:none;">
-                
                 <section id="myPlan-section">
-                    <header class="glass-header">
-                        <div>
-                            <h1 id="athleteGreeting" style="font-size:1.8rem;">Hola Atleta</h1>
-                            <p class="subtitle">Tu protocolo de rendimiento actual</p>
-                        </div>
-                    </header>
+                    <h1 id="athleteGreeting">Hola</h1>
                     <div id="myCurrentDietContainer"></div>
                 </section>
-
-                <section id="evolution-section" style="display:none;">
-                    <header class="glass-header">
-                        <h1>Mi Progreso</h1>
-                        <button class="btn-primary" onclick="openModal('checkinModal')">+ Registrar Peso</button>
-                    </header>
-                    <div class="glass-panel" style="padding:20px; border-radius:16px; margin-bottom:25px;">
-                        <h4 style="color:#aaa; margin-bottom:15px;">GRÁFICA DE PESO</h4>
-                        <div style="height:300px;"><canvas id="weightChart"></canvas></div>
-                    </div>
-                    <h3>Registros Anteriores</h3>
-                    <div id="weightHistoryList" class="grid-container" style="margin-top:15px;"></div>
-                </section>
-
-                <section id="education-section" style="display:none;">
-                    <header class="glass-header"><h1>Guía Nutricional</h1></header>
-                    <div id="eduContent"></div>
-                </section>
-
-                <section id="history-section" style="display:none;">
-                    <header class="glass-header"><h1>Historial de Planes</h1></header>
-                    <div id="historyList" class="grid-container"></div>
-                </section>
-
-                <section id="notes-section" style="display:none;">
-                    <header class="glass-header"><h1>Diario / Feedback</h1></header>
-                    <div class="card glass-panel" style="margin-bottom:25px;">
-                        <h3 style="margin-bottom:15px;">Enviar nota al entrenador</h3>
-                        <textarea id="athleteNoteInput" rows="4" placeholder="Ej: Sensaciones, dudas sobre una comida..." class="glass-input" style="width:100%; resize:none;"></textarea>
-                        <button class="btn-primary" onclick="sendAthleteNote()" style="margin-top:15px; width:100%;"><i class="bi bi-send-fill"></i> Enviar Nota</button>
-                    </div>
-                    <h3 style="margin-bottom:15px; color:#888;">Notas Anteriores</h3>
-                    <div id="myNotesHistory"></div>
-                </section>
+                <section id="education-section" style="display:none;"><div id="eduContent"></div></section>
+                <section id="evolution-section" style="display:none;"><h1>Evolución</h1><div class="card"><canvas id="weightChart"></canvas></div><button class="btn-primary" onclick="openModal('checkinModal')" style="margin-top:20px;">+ Peso</button><div id="weightHistoryList" style="margin-top:20px;"></div></section>
+                <section id="history-section" style="display:none;"><div id="historyList" class="grid-container"></div></section>
+                <section id="notes-section" style="display:none;"><h1>Notas</h1><textarea id="athleteNoteInput" class="glass-input" rows="3"></textarea><button class="btn-primary" onclick="sendAthleteNote()" style="margin-top:10px;">Enviar</button><div id="myNotesHistory" style="margin-top:20px;"></div></section>
             </div>
-
         </main>
     </div>
 
-    <div id="loginModal" class="modal">
-        <div class="modal-content glass-panel" style="max-width:380px; text-align:center;">
-            <span class="close" onclick="closeModal('loginModal')">&times;</span>
-            <img src="logo.png" style="height:60px; margin-bottom:20px; border-radius:12px;">
-            
-            <div id="loginBox">
-                <h2 style="margin-bottom:25px;">Acceso NDP</h2>
-                <form id="loginForm">
-                    <input type="email" id="loginEmail" placeholder="Email" class="glass-input" required>
-                    <input type="password" id="loginPass" placeholder="Contraseña" class="glass-input" required>
-                    <button type="submit" class="btn-primary" style="width:100%; margin-top:20px; padding:12px;">Entrar</button>
-                </form>
-                <p style="font-size:0.85rem; margin-top:25px; color:#aaa;">
-                    ¿Eres nuevo? <a href="#" onclick="toggleAuthMode()" style="color:var(--brand-red); font-weight:600;">Regístrate</a>
-                </p>
-            </div>
-
-            <div id="registerBox" style="display:none;">
-                <h2 style="margin-bottom:25px;">Registro Atleta</h2>
-                <form id="registerForm">
-                    <input type="text" id="regName" placeholder="Nombre Completo" class="glass-input" required>
-                    <input type="text" id="regAlias" placeholder="Alias (Visible)" class="glass-input" required>
-                    <input type="email" id="regEmail" placeholder="Email" class="glass-input" required>
-                    <input type="password" id="regPass" placeholder="Crear Contraseña" class="glass-input" required>
-                    <button type="submit" class="btn-primary" style="width:100%; margin-top:20px; padding:12px;">Crear Cuenta</button>
-                </form>
-                <p style="font-size:0.85rem; margin-top:25px; color:#aaa;">
-                    ¿Ya tienes cuenta? <a href="#" onclick="toggleAuthMode()" style="color:var(--brand-red); font-weight:600;">Inicia sesión</a>
-                </p>
-            </div>
-        </div>
-    </div>
-
     <div id="dietViewModal" class="modal">
-        <div class="modal-content glass-panel large-modal">
-            <span class="close" onclick="closeModal('dietViewModal')">&times;</span>
-            <div id="diet-detail-content"></div>
-        </div>
-    </div>
-
-    <div id="clientModal" class="modal">
-        <div class="modal-content glass-panel" style="max-width:500px;">
-            <span class="close" onclick="closeModal('clientModal')">&times;</span>
-            <h2>Ficha Nuevo Atleta</h2>
-            <form id="addClientForm">
-                <label>Nombre</label><input type="text" id="clientName" class="glass-input" required>
-                <label>Alias</label><input type="text" id="clientAlias" class="glass-input" required>
-                <label>Email</label><input type="email" id="clientEmail" class="glass-input" required>
-                <label>Objetivo</label>
-                <select id="clientGoal" class="glass-input">
-                    <option value="Perdida Grasa">Definición</option>
-                    <option value="Volumen">Volumen</option>
-                    <option value="Salud">Salud</option>
-                </select>
-                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Crear Ficha</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="checkinModal" class="modal">
-        <div class="modal-content glass-panel" style="max-width:400px;">
-            <span class="close" onclick="closeModal('checkinModal')">&times;</span>
-            <h2>Registrar Peso</h2>
-            <form id="checkinForm">
-                <label>Fecha</label>
-                <input type="date" id="checkinDate" class="glass-input" required>
-                <label>Peso Actual (kg)</label>
-                <input type="number" step="0.1" id="checkinWeight" placeholder="Ej: 75.5" class="glass-input" required>
-                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar Registro</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="manualDietModal" class="modal">
-        <div class="modal-content glass-panel" style="max-width:600px;">
-            <span class="close" onclick="closeModal('manualDietModal')">&times;</span>
-            <h2>Crear Dieta Manual</h2>
-            <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Diseña un plan a medida rápidamente.</p>
-            
-            <form onsubmit="createManualDiet(event)">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                    <div>
-                        <label>Nombre Plan</label>
-                        <input type="text" id="mdName" placeholder="Ej: Dieta Ana" class="glass-input" required>
-                    </div>
-                    <div>
-                        <label>Calorías Totales</label>
-                        <input type="number" id="mdKcal" placeholder="2000" class="glass-input" required>
-                    </div>
+        <div class="modal-content">
+            <div class="modal-header-fixed">
+                <h3 style="margin:0; color:white;">Plan Nutricional</h3>
+                <button class="close-btn" onclick="closeModal('dietViewModal')"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="modal-body" id="diet-detail-content">
                 </div>
-                
-                <label style="margin-top:15px; display:block;">Categoría</label>
-                <select id="mdCat" class="glass-input" style="margin-bottom:25px;">
-                    <option value="Déficit">Déficit</option>
-                    <option value="Volumen">Volumen</option>
-                    <option value="Salud">Salud</option>
-                    <option value="Senior">Senior</option>
-                </select>
-                
-                <h4 style="color:var(--brand-red); border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px;">Menú Diario</h4>
-                
-                <label>Desayuno</label>
-                <textarea id="mdBreakfast" placeholder="Describe el desayuno..." class="glass-input" rows="2"></textarea>
-                
-                <label style="margin-top:10px; display:block;">Comida</label>
-                <textarea id="mdLunch" placeholder="Describe la comida..." class="glass-input" rows="2"></textarea>
-                
-                <label style="margin-top:10px; display:block;">Cena</label>
-                <textarea id="mdDinner" placeholder="Describe la cena..." class="glass-input" rows="2"></textarea>
-                
-                <button type="submit" class="btn-primary" style="width:100%; margin-top:25px">Guardar en Biblioteca</button>
-            </form>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal" style="align-items:center; justify-content:center;">
+        <div class="modal-content" style="max-width:400px; height:auto; border-radius:20px;">
+            <div style="padding:30px; text-align:center;">
+                <button class="close-btn" onclick="closeModal('loginModal')" style="position:absolute; right:10px; top:10px;"><i class="bi bi-x"></i></button>
+                <h2>Acceso</h2>
+                <form id="loginForm">
+                    <input type="email" id="loginEmail" class="glass-input" placeholder="Email" required>
+                    <input type="password" id="loginPass" class="glass-input" placeholder="Pass" required>
+                    <button type="submit" class="btn-primary" style="margin-top:20px;">Entrar</button>
+                </form>
+            </div>
         </div>
     </div>
 
