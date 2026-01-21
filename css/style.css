@@ -1,219 +1,140 @@
 :root {
-    /* PALETA CORPORATIVA */
     --bg-dark: #000000;
     --brand-red: #D32F2F;
-    --brand-red-hover: #ff4f4f;
     --text-main: #ffffff;
     --text-muted: #a0a0a0;
-
-    /* VARIABLES "LIQUID GLASS" IPHONE STYLE */
-    --glass-bg: rgba(28, 28, 30, 0.65);
-    --glass-border: rgba(255, 255, 255, 0.12);
-    --glass-shine: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%);
+    --glass-bg: rgba(28, 28, 30, 0.85); /* Más opaco para lectura */
+    --glass-border: rgba(255, 255, 255, 0.15);
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    --blur-amt: 25px;
-    --radius-xl: 24px;
-    --radius-l: 16px;
-    --radius-m: 12px;
+    --radius-xl: 24px; --radius-l: 16px; --radius-m: 12px;
 }
 
 body {
-    margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-color: var(--bg-dark); color: var(--text-main);
-    overflow-x: hidden;
+    overflow-x: hidden; -webkit-font-smoothing: antialiased;
 }
 
-/* --- FONDO LÍQUIDO ANIMADO --- */
+/* --- FONDO --- */
 .background-blobs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; overflow: hidden;}
-.blob { position: absolute; border-radius: 50%; filter: blur(130px); opacity: 0.25; animation: floatBlob 20s infinite alternate ease-in-out;}
-.blob-1 { width: 500px; height: 500px; background: var(--brand-red); top: -150px; left: -100px; }
-.blob-2 { width: 600px; height: 600px; background: #222; bottom: -200px; right: -150px; animation-delay: -10s; opacity: 0.4; }
-.glass-overlay { position: absolute; top:0; left:0; width:100%; height:100%; backdrop-filter: blur(10px); z-index: -1; opacity: 0.3; }
+.blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; }
+.blob-1 { width: 100vw; height: 100vw; background: radial-gradient(circle, var(--brand-red) 0%, transparent 70%); top: -20%; left: -20%; }
+.glass-overlay { position: absolute; top:0; left:0; width:100%; height:100%; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: -1; }
 
-@keyframes floatBlob { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.1); } }
-
-/* --- COMPONENTES "GLASS" --- */
-.glass-panel, .card, .modal-content, .mobile-header {
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--blur-amt)); -webkit-backdrop-filter: blur(var(--blur-amt));
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow), inset 0 1px 1px rgba(255,255,255,0.1);
-    position: relative; overflow: hidden;
-}
-.glass-panel::before, .card::before, .modal-content::before, .mobile-header::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%;
-    background: var(--glass-shine); pointer-events: none; z-index: -1;
+/* --- COMPONENTES --- */
+.glass-panel, .card, .mobile-header {
+    background: var(--glass-bg); border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow); position: relative; overflow: hidden;
 }
 
-/* Inputs */
 .glass-input {
-    width: 100%; padding: 14px; background: rgba(0,0,0,0.3);
+    width: 100%; padding: 14px; background: rgba(0,0,0,0.4);
     border: 1px solid var(--glass-border); color: white; border-radius: var(--radius-m);
-    margin-top: 8px; box-sizing: border-box; font-size: 1rem; transition: 0.3s;
+    margin-top: 8px; box-sizing: border-box; font-size: 16px; /* Evita zoom en iPhone */
 }
-.glass-input:focus { outline: none; border-color: var(--brand-red); background: rgba(0,0,0,0.5); box-shadow: 0 0 15px rgba(211, 47, 47, 0.2); }
-.search-box.glass-input { display: flex; align-items: center; padding: 5px 15px; margin-top:0; background: rgba(0,0,0,0.4);}
-.search-box input { border: none; background: transparent; padding: 10px; margin:0; width:100%; color: white;}
-.search-box i { color: var(--text-muted); }
+.glass-input:focus { border-color: var(--brand-red); outline:none; }
 
-/* --- LAYOUT & HEADER --- */
+/* --- LAYOUT --- */
 .app-container { display: flex; height: 100vh; }
 .mobile-header {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 70px;
-    z-index: 900; align-items: center; justify-content: space-between; padding: 0 20px;
-    box-sizing: border-box; border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-    border-top: none; border-left: none; border-right: none;
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+    z-index: 900; align-items: center; justify-content: space-between; padding: 0 15px;
+    border-bottom: 1px solid var(--glass-border);
 }
-.mobile-menu-btn { background: transparent; border: none; color: var(--brand-red); font-size: 1.8rem; cursor: pointer; padding: 5px; }
-.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 950; }
+.mobile-menu-btn { background: transparent; border: none; color: var(--brand-red); font-size: 1.8rem; padding: 5px; }
+.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 950; }
 
-/* --- SIDEBAR --- */
 .sidebar {
-    width: 280px; padding: 30px 25px; display: flex; flex-direction: column;
-    border-radius: 0 var(--radius-xl) var(--radius-xl) 0; flex-shrink: 0; z-index: 1000;
-    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    border-top: none; border-bottom: none; border-left: none;
-}
-.logo h2 { font-weight: 900; letter-spacing: -1px; }
-.highlight { color: var(--brand-red); }
-
-.nav-btn {
-    background: transparent; border: none; color: var(--text-muted); width: 100%;
-    text-align: left; padding: 16px 20px; cursor: pointer; font-size: 1.05rem; margin-bottom: 8px;
-    border-radius: var(--radius-m); transition: 0.3s; font-weight: 600; display: flex; align-items: center;
-}
-.nav-btn i { margin-right: 15px; font-size: 1.2rem; }
-.nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-.nav-btn.active {
-    background: linear-gradient(90deg, rgba(211, 47, 47, 0.2) 0%, transparent 100%);
-    color: white; box-shadow: inset 3px 0 0 var(--brand-red);
+    width: 280px; padding: 30px 20px; display: flex; flex-direction: column;
+    border-right: 1px solid var(--glass-border); flex-shrink: 0; z-index: 1000;
+    transition: transform 0.3s ease; background: black;
 }
 
-/* --- MAIN CONTENT --- */
-.main-content { flex: 1; padding: 40px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.glass-header {
-    margin-bottom: 35px; padding-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end;
-    border-bottom: 1px solid var(--glass-border); position: relative;
-}
-.glass-header h1 { margin: 0; font-size: 2.2rem; font-weight: 800; letter-spacing: -0.5px; }
-.subtitle { color: var(--text-muted); margin: 8px 0 0 0; font-size: 1rem; }
-.wrap-header { flex-wrap: wrap; gap: 20px; }
-.toolbar { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+.main-content { flex: 1; padding: 30px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.glass-header { margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:15px; align-items:flex-end;}
 
-/* --- CARDS --- */
-.grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-.card { border-radius: var(--radius-l); padding: 25px; display: flex; flex-direction: column; transition: 0.3s; }
-.card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.6); border-color: rgba(211, 47, 47, 0.4); }
-.card h3 { margin: 15px 0 10px 0; color: white; font-size: 1.3rem; }
-.card p { color: #bbb; font-size: 0.95rem; line-height: 1.5; flex-grow: 1; }
+/* --- CARDS & GRID --- */
+.grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.card { border-radius: var(--radius-l); padding: 20px; display: flex; flex-direction: column; }
+.card h3 { margin: 10px 0; color: white; font-size: 1.2rem; }
+.status-badge { padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 
-.status-badge {
-    padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-/* --- BUTTONS --- */
+/* --- BOTONES --- */
 .btn-primary {
-    background: linear-gradient(135deg, var(--brand-red) 0%, #a32323 100%);
-    color: white; border: none; padding: 14px 28px; border-radius: var(--radius-m);
-    font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 1rem;
-    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4);
+    background: var(--brand-red); color: white; border: none; padding: 12px 24px; 
+    border-radius: var(--radius-m); font-weight: 700; cursor: pointer; width: auto;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(211, 47, 47, 0.5); }
-.btn-danger {
-    background: rgba(211, 47, 47, 0.1); border: 1px solid var(--brand-red); color: var(--brand-red);
-    padding: 10px 20px; border-radius: var(--radius-m); cursor: pointer; font-weight: 600; transition: 0.3s;
-    display: flex; align-items: center; gap: 8px;
-}
-.btn-danger:hover { background: var(--brand-red); color: white; }
 .btn-assign {
-    background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white;
-    padding: 12px; width: 100%; border-radius: var(--radius-m); cursor: pointer; display: flex;
-    justify-content: center; gap: 10px; font-weight: 600; transition: 0.3s; margin-top: 20px;
+    background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;
+    padding: 10px; width: 100%; border-radius: var(--radius-m); cursor: pointer; margin-top: 15px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.btn-assign:hover { background: var(--brand-red); border-color: var(--brand-red); }
 
-/* --- MODALS FIX (SOLUCIÓN CORTE) --- */
+/* --- MODALS (CORRECCIÓN IPHONE) --- */
 .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 2000; 
-    left: 0; top: 0; 
-    width: 100%; height: 100%; 
-    background-color: rgba(0,0,0,0.85); 
+    display: none; position: fixed; z-index: 2000; left: 0; top: 0; 
+    width: 100%; height: 100%; background: rgba(0,0,0,0.8);
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    /* FLEXBOX CENTERING PARA EVITAR CORTES */
-    align-items: center;
-    justify-content: center;
-    padding: 20px; /* Margen seguro alrededor */
-    box-sizing: border-box;
+    overflow-y: hidden; /* El scroll va dentro del content */
 }
 
 .modal-content {
-    margin: 0; /* Ya no usamos margin auto */
-    padding: 30px;
-    width: 100%;
-    max-width: 900px; /* Para modales grandes */
+    background: #111;
+    margin: 5% auto; 
+    padding: 30px; 
+    width: 90%; 
+    max-width: 900px; 
+    max-height: 90vh; 
     border-radius: var(--radius-xl);
-    border: 1px solid rgba(255,255,255,0.15);
-    box-shadow: 0 25px 60px rgba(0,0,0,0.8);
-    
-    /* CONTROL DE SCROLL */
-    max-height: 85vh; /* Dejamos un 15% de pantalla libre */
-    overflow-y: auto; /* Scroll vertical */
-    
-    /* PADDING INFERIOR EXTRA (CLAVE PARA EL CORTE) */
-    padding-bottom: 80px; 
+    border: 1px solid var(--glass-border);
+    overflow-y: auto; /* Scroll interno */
+    position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    padding-bottom: 100px; /* Espacio final para scroll */
 }
 
-/* Scrollbar Bonita dentro del modal */
-.modal-content::-webkit-scrollbar { width: 8px; }
-.modal-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-.modal-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-.modal-content::-webkit-scrollbar-thumb:hover { background: var(--brand-red); }
-
-.large-modal { width: 100%; max-width: 800px; }
-.close { 
-    position: sticky; /* Sticky para que siempre esté visible al hacer scroll */
-    top: 0; right: 0; float: right; 
-    font-size: 32px; cursor: pointer; color: #aaa; transition: 0.3s; 
-    z-index: 10; margin-top: -10px; margin-right: -10px;
-    background: rgba(0,0,0,0.5); border-radius: 50%; width: 40px; height: 40px;
-    display: flex; align-items: center; justify-content: center;
+.close {
+    position: sticky; top: 0; float: right; 
+    font-size: 2rem; color: #fff; cursor: pointer; 
+    background: rgba(0,0,0,0.5); width: 40px; height: 40px; 
+    display: flex; align-items: center; justify-content: center; 
+    border-radius: 50%; z-index: 100; margin-right: -10px; margin-top: -10px;
 }
-.close:hover { color: white; background: var(--brand-red); }
 
-/* Detalles Dieta */
-.diet-header-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-bottom: 30px; align-items: start; }
-.warning-box {
-    background: rgba(255, 152, 0, 0.1); border-left: 4px solid #f57c00;
-    padding: 20px; margin: 25px 0; border-radius: var(--radius-m); font-size: 0.95rem; color: #ffcc80;
-}
-.hydration-box { background: rgba(33, 150, 243, 0.15); padding: 20px; border-radius: var(--radius-m); color: #64b5f6; font-weight: 600; border: 1px solid rgba(33, 150, 243, 0.3); }
+/* --- ESTILOS DIETA --- */
+.diet-header-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px; }
+.meal-section { background: rgba(255,255,255,0.03); border-radius: var(--radius-l); padding: 20px; margin-bottom: 15px; border: 1px solid var(--glass-border); }
+.meal-title { color: var(--brand-red); margin: 0 0 15px 0; text-transform: uppercase; font-size: 0.95rem; font-weight: 800; display:flex; justify-content:space-between;}
+.meal-kcal { color: #888; font-size: 0.8rem; font-weight:normal; text-transform:none;}
+.option-card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: var(--radius-m); margin-bottom: 8px; border-left: 3px solid #333; }
+.option-card:hover { border-left-color: var(--brand-red); background: rgba(0,0,0,0.5); }
 
-.meal-section { background: rgba(255,255,255,0.03); border-radius: var(--radius-l); padding: 20px; margin-bottom: 20px; border: 1px solid var(--glass-border); }
-.meal-title { color: var(--brand-red); margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 10px;}
-.option-card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: var(--radius-m); margin-bottom: 10px; border: 1px solid var(--glass-border); transition: 0.3s; }
-.option-card:hover { border-color: var(--brand-red); background: rgba(0,0,0,0.6); }
-
-/* Notificaciones */
-#notifDot { position:absolute; top:0px; right:0px; width:10px; height:10px; background:var(--brand-red); border-radius:50%; border: 2px solid #000; animation: pulse 2s infinite; display: none; }
-@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
-#inbox-list .card { border-left: 4px solid #333; }
-#inbox-list .card.unread { border-left-color: var(--brand-red); background: linear-gradient(90deg, rgba(211, 47, 47, 0.1) 0%, transparent 50%); }
-
-/* --- RESPONSIVE --- */
+/* --- RESPONSIVE IPHONE --- */
 @media (max-width: 768px) {
-    .app-container { padding-top: 70px; }
+    .app-container { padding-top: 60px; }
     .mobile-header { display: flex; }
-    .sidebar { position: fixed; height: 100%; top: 0; left: 0; transform: translateX(-105%); width: 85%; max-width: 320px; border-radius: 0 var(--radius-xl) var(--radius-xl) 0; padding-top: 40px; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+    .sidebar { position: fixed; height: 100%; top: 0; left: 0; transform: translateX(-100%); width: 85%; }
     .sidebar.active { transform: translateX(0); }
     .overlay.active { display: block; }
-    .main-content { padding: 25px 20px; }
+    .main-content { padding: 15px; }
     .diet-header-grid { grid-template-columns: 1fr !important; gap: 20px; }
     
-    /* FIX MODAL MOBILE */
-    .modal { align-items: flex-start; padding-top: 80px; } /* Empezar un poco más abajo en móvil */
-    .modal-content { max-height: 80vh; margin-bottom: 50px; }
-    .toolbar { flex-direction: column; align-items: stretch; }
+    /* MODAL PANTALLA COMPLETA */
+    .modal { padding: 0; align-items: flex-end; } /* Slide up effect preparation */
+    .modal-content {
+        width: 100%; 
+        height: 100%; 
+        max-width: 100%; 
+        max-height: 100%; 
+        margin: 0; 
+        border-radius: 0; 
+        border: none;
+        padding: 20px;
+        padding-top: 60px; /* Espacio para botón cerrar */
+        padding-bottom: 120px;
+    }
+    .close { 
+        position: fixed; top: 15px; right: 15px; 
+        background: var(--brand-red); width: 45px; height: 45px;
+    }
 }
