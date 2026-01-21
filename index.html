@@ -7,20 +7,24 @@
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png"> <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
 
     <link rel="stylesheet" href="css/style.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+
     <div class="background-blobs">
         <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="glass-overlay"></div> </div>
+        <div class="glass-overlay"></div>
+    </div>
 
     <div class="mobile-header glass-panel">
         <div class="logo" style="display:flex; align-items:center; gap:10px;">
@@ -39,9 +43,10 @@
     <div class="overlay" onclick="toggleSidebar()"></div>
 
     <div class="app-container">
+        
         <aside class="sidebar glass-panel" id="sidebar">
             <div class="logo" style="text-align:center; margin-bottom:40px; margin-top:20px;">
-                <img src="logo.png" alt="Logo" style="height:90px; margin-bottom:15px; border-radius:18px; box-shadow: 0 8px 20px rgba(0,0,0,0.3);">
+                <img src="logo.png" alt="Logo" style="height:90px; margin-bottom:15px; border-radius:18px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);">
                 <h2>NUTRI<span class="highlight">DATA</span>PRO</h2>
             </div>
             
@@ -53,12 +58,13 @@
 
             <nav id="athleteNav" style="display:none;">
                 <button class="nav-btn active" onclick="showAthleteSection('myPlan'); toggleSidebar()"><i class="bi bi-calendar-check-fill"></i> Mi Plan Actual</button>
+                <button class="nav-btn" onclick="showAthleteSection('evolution'); toggleSidebar()"><i class="bi bi-graph-up-arrow"></i> Mi Evolución</button>
                 <button class="nav-btn" onclick="showAthleteSection('education'); toggleSidebar()"><i class="bi bi-book-half"></i> Guía & Tips</button>
                 <button class="nav-btn" onclick="showAthleteSection('history'); toggleSidebar()"><i class="bi bi-clock-history"></i> Historial</button>
                 <button class="nav-btn" onclick="showAthleteSection('notes'); toggleSidebar()"><i class="bi bi-pencil-square"></i> Mis Notas</button>
             </nav>
 
-            <div class="user-profile">
+            <div class="user-profile" style="margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);">
                 <div id="authContainer" style="width:100%">
                     <button id="btnLogin" class="btn-primary" style="width:100%; font-size:0.9rem;">Acceder</button>
                 </div>
@@ -68,10 +74,11 @@
         <main class="main-content">
             
             <div id="adminView" style="display:none;">
+                
                 <section id="clients-section">
                     <header class="glass-header">
                         <h1>Atletas Activos</h1>
-                        <button class="btn-primary" onclick="openModal('clientModal')">+ Añadir Manual</button>
+                        <button class="btn-primary" onclick="openModal('clientModal')">+ Nuevo Atleta</button>
                     </header>
                     <div class="grid-container" id="clients-grid"></div>
                 </section>
@@ -80,9 +87,9 @@
                     <header class="glass-header wrap-header">
                         <h1>Biblioteca NDP</h1>
                         <div class="toolbar">
-                            <div class="search-box glass-input">
+                            <div class="search-box glass-input" style="width:auto; display:flex; align-items:center;">
                                 <i class="bi bi-search"></i>
-                                <input type="text" id="searchKcal" placeholder="Buscar dieta..." oninput="filterDiets()">
+                                <input type="text" id="searchKcal" placeholder="Buscar dieta..." oninput="filterDiets()" style="border:none;">
                             </div>
                             <button class="btn-danger" onclick="resetDatabaseManual()"><i class="bi bi-database-fill-down"></i> Reset DB</button>
                         </div>
@@ -97,6 +104,7 @@
             </div>
 
             <div id="athleteView" style="display:none;">
+                
                 <section id="myPlan-section">
                     <header class="glass-header">
                         <div>
@@ -105,6 +113,19 @@
                         </div>
                     </header>
                     <div id="myCurrentDietContainer"></div>
+                </section>
+
+                <section id="evolution-section" style="display:none;">
+                    <header class="glass-header">
+                        <h1>Mi Progreso</h1>
+                        <button class="btn-primary" onclick="openModal('checkinModal')">+ Registrar Peso</button>
+                    </header>
+                    <div class="glass-panel" style="padding:20px; border-radius:16px; margin-bottom:25px;">
+                        <h4 style="color:#aaa; margin-bottom:15px;">GRÁFICA DE PESO</h4>
+                        <div style="height:300px;"><canvas id="weightChart"></canvas></div>
+                    </div>
+                    <h3>Registros Anteriores</h3>
+                    <div id="weightHistoryList" class="grid-container" style="margin-top:15px;"></div>
                 </section>
 
                 <section id="education-section" style="display:none;">
@@ -145,7 +166,7 @@
                     <button type="submit" class="btn-primary" style="width:100%; margin-top:20px; padding:12px;">Entrar</button>
                 </form>
                 <p style="font-size:0.85rem; margin-top:25px; color:#aaa;">
-                    ¿Eres atleta nuevo? <a href="#" onclick="toggleAuthMode()" style="color:var(--brand-red); font-weight:600;">Regístrate aquí</a>
+                    ¿Eres nuevo? <a href="#" onclick="toggleAuthMode()" style="color:var(--brand-red); font-weight:600;">Regístrate</a>
                 </p>
             </div>
 
@@ -153,7 +174,7 @@
                 <h2 style="margin-bottom:25px;">Registro Atleta</h2>
                 <form id="registerForm">
                     <input type="text" id="regName" placeholder="Nombre Completo" class="glass-input" required>
-                    <input type="text" id="regAlias" placeholder="Alias (Visible en App)" class="glass-input" required>
+                    <input type="text" id="regAlias" placeholder="Alias (Visible)" class="glass-input" required>
                     <input type="email" id="regEmail" placeholder="Email" class="glass-input" required>
                     <input type="password" id="regPass" placeholder="Crear Contraseña" class="glass-input" required>
                     <button type="submit" class="btn-primary" style="width:100%; margin-top:20px; padding:12px;">Crear Cuenta</button>
@@ -173,7 +194,7 @@
     </div>
 
     <div id="clientModal" class="modal">
-        <div class="modal-content glass-panel">
+        <div class="modal-content glass-panel" style="max-width:500px;">
             <span class="close" onclick="closeModal('clientModal')">&times;</span>
             <h2>Ficha Nuevo Atleta</h2>
             <form id="addClientForm">
@@ -181,35 +202,72 @@
                 <label>Alias</label><input type="text" id="clientAlias" class="glass-input" required>
                 <label>Email</label><input type="email" id="clientEmail" class="glass-input" required>
                 <label>Objetivo</label>
-                <select id="clientGoal" class="glass-input"><option value="Perdida Grasa">Definición</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option></select>
+                <select id="clientGoal" class="glass-input">
+                    <option value="Perdida Grasa">Definición</option>
+                    <option value="Volumen">Volumen</option>
+                    <option value="Salud">Salud</option>
+                </select>
                 <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Crear Ficha</button>
             </form>
         </div>
     </div>
 
-    <div id="manualDietModal" class="modal">
-    <div class="modal-content glass-panel">
-        <span class="close" onclick="closeModal('manualDietModal')">&times;</span>
-        <h2>Crear Dieta Manual</h2>
-        <form onsubmit="createManualDiet(event)">
-            <label>Nombre Dieta</label><input type="text" id="mdName" class="glass-input" required>
-            <label>Calorías (aprox)</label><input type="number" id="mdKcal" class="glass-input" required>
-            <label>Categoría</label>
-            <select id="mdCat" class="glass-input">
-                <option value="Déficit">Déficit</option>
-                <option value="Volumen">Volumen</option>
-                <option value="Salud">Salud</option>
-            </select>
-            
-            <h4 style="margin-top:20px; color:var(--brand-red)">Menú (Escribe libremente)</h4>
-            <label>Desayuno</label><textarea id="mdBreakfast" class="glass-input" rows="2"></textarea>
-            <label>Comida</label><textarea id="mdLunch" class="glass-input" rows="2"></textarea>
-            <label>Cena</label><textarea id="mdDinner" class="glass-input" rows="2"></textarea>
-            
-            <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar en Biblioteca</button>
-        </form>
+    <div id="checkinModal" class="modal">
+        <div class="modal-content glass-panel" style="max-width:400px;">
+            <span class="close" onclick="closeModal('checkinModal')">&times;</span>
+            <h2>Registrar Peso</h2>
+            <form id="checkinForm">
+                <label>Fecha</label>
+                <input type="date" id="checkinDate" class="glass-input" required>
+                <label>Peso Actual (kg)</label>
+                <input type="number" step="0.1" id="checkinWeight" placeholder="Ej: 75.5" class="glass-input" required>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar Registro</button>
+            </form>
+        </div>
     </div>
-</div>
+
+    <div id="manualDietModal" class="modal">
+        <div class="modal-content glass-panel" style="max-width:600px;">
+            <span class="close" onclick="closeModal('manualDietModal')">&times;</span>
+            <h2>Crear Dieta Manual</h2>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Diseña un plan a medida rápidamente.</p>
+            
+            <form onsubmit="createManualDiet(event)">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div>
+                        <label>Nombre Plan</label>
+                        <input type="text" id="mdName" placeholder="Ej: Dieta Ana" class="glass-input" required>
+                    </div>
+                    <div>
+                        <label>Calorías Totales</label>
+                        <input type="number" id="mdKcal" placeholder="2000" class="glass-input" required>
+                    </div>
+                </div>
+                
+                <label style="margin-top:15px; display:block;">Categoría</label>
+                <select id="mdCat" class="glass-input" style="margin-bottom:25px;">
+                    <option value="Déficit">Déficit</option>
+                    <option value="Volumen">Volumen</option>
+                    <option value="Salud">Salud</option>
+                    <option value="Senior">Senior</option>
+                </select>
+                
+                <h4 style="color:var(--brand-red); border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px;">Menú Diario</h4>
+                
+                <label>Desayuno</label>
+                <textarea id="mdBreakfast" placeholder="Describe el desayuno..." class="glass-input" rows="2"></textarea>
+                
+                <label style="margin-top:10px; display:block;">Comida</label>
+                <textarea id="mdLunch" placeholder="Describe la comida..." class="glass-input" rows="2"></textarea>
+                
+                <label style="margin-top:10px; display:block;">Cena</label>
+                <textarea id="mdDinner" placeholder="Describe la cena..." class="glass-input" rows="2"></textarea>
+                
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:25px">Guardar en Biblioteca</button>
+            </form>
+        </div>
+    </div>
+
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
