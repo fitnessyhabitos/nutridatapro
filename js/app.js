@@ -21,7 +21,7 @@ let currentUser = null;
 let userData = null; // Datos del doc 'clientes'
 let isAdmin = false;
 let currentChart = null;
-const ADMIN_EMAIL = "admin@nutridatapro.com"; 
+const ADMIN_EMAIL = "toni@nutridatapro.com"; 
 
 // ==========================================
 // 1. SISTEMA DE SESIÓN (LOGIN/REGISTRO)
@@ -396,4 +396,5 @@ async function loadDietsAdmin() { /* ... (COPIAR LA MISMA DE ANTES para renderDi
 window.filterDiets = () => { /* ... (COPIAR LA MISMA DE ANTES) ... */ };
 window.toggleSidebar = () => { document.getElementById('sidebar').classList.toggle('active'); document.querySelector('.overlay').classList.toggle('active'); };
 window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+
 window.openModal = (id) => document.getElementById(id).style.display = 'block';
