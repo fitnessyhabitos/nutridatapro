@@ -91,10 +91,11 @@
                                 <option value="Senior">Senior</option>
                             </select>
                             
-                            <div class="search-box glass-input" style="width:auto; display:flex; align-items:center;">
+                            <div class="search-box">
                                 <i class="bi bi-search"></i>
-                                <input type="text" id="searchKcal" placeholder="Buscar..." oninput="filterDiets()" style="border:none;">
+                                <input type="text" id="searchKcal" placeholder="Buscar..." oninput="filterDiets()">
                             </div>
+
                             <button class="btn-danger" onclick="resetDatabaseManual()"><i class="bi bi-database-fill-down"></i> Reset DB</button>
                             <button class="btn-primary" onclick="openModal('manualDietModal')"><i class="bi bi-plus-lg"></i> Manual</button>
                         </div>
@@ -137,11 +138,12 @@
 
     <div id="clientSelectorModal" class="modal">
         <div class="modal-content" style="max-width:500px; height:80vh;">
-            <div style="padding:20px; border-bottom:1px solid #333; display:flex; justify-content:space-between;">
+            <div class="modal-header-fixed">
                 <h3 style="margin:0; color:white;">Asignar a...</h3>
-                <button class="close-btn" onclick="closeModal('clientSelectorModal')"><i class="bi bi-x"></i></button>
+                <button class="close-btn" onclick="closeModal('clientSelectorModal')"><i class="bi bi-x-lg"></i></button>
             </div>
-            <div class="modal-body" style="padding:20px;">
+            <div class="modal-body">
+                <p style="color:#aaa; margin-bottom:15px;">Selecciona el atleta:</p>
                 <div id="clientSelectorList" class="list-container"></div>
             </div>
         </div>
