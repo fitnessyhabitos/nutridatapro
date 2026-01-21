@@ -1,140 +1,111 @@
 :root {
-    /* PALETA */
     --bg-dark: #000000;
     --brand-red: #D32F2F;
-    --brand-red-gradient: linear-gradient(135deg, #D32F2F 0%, #801313 100%);
+    --brand-red-gradient: linear-gradient(135deg, #D32F2F 0%, #9A0007 100%);
     --text-main: #ffffff;
     --text-muted: #b0b0b0;
-
-    /* GLASS */
-    --glass-bg: rgba(25, 25, 25, 0.85); /* Más opaco para lectura */
-    --glass-border: 1px solid rgba(255, 255, 255, 0.12);
-    --glass-shine: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
-    --glass-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
-    --radius-l: 16px;
+    --glass-bg: rgba(20, 20, 20, 0.9);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
     --radius-m: 12px;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-body {
-    margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: var(--bg-dark); color: var(--text-main);
-    overflow: hidden; /* Evita scroll global */
-}
+body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); overflow: hidden; }
 
 /* FONDO */
 .background-blobs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
-.blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.25; }
+.blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; }
 .blob-1 { width: 90vw; height: 90vw; background: radial-gradient(circle, var(--brand-red) 0%, transparent 70%); top: -20%; left: -20%; }
 
-/* COMPONENTES GLASS */
+/* GLASS UI */
 .glass-panel, .card, .sidebar, .mobile-header {
     background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: var(--glass-border); box-shadow: var(--glass-shadow); position: relative;
+    border: var(--glass-border); box-shadow: var(--glass-shadow);
 }
-.glass-panel::before, .card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%;
-    background: var(--glass-shine); pointer-events: none; z-index: 0;
-}
-.card > *, .glass-panel > * { position: relative; z-index: 1; }
 
 /* INPUTS */
 .glass-input, select, textarea {
-    width: 100%; padding: 12px; background: rgba(0,0,0,0.4);
+    width: 100%; padding: 12px; background: rgba(0,0,0,0.5);
     border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: var(--radius-m);
-    margin-top: 5px; font-size: 16px; /* Evita zoom iOS */
-    appearance: none; -webkit-appearance: none;
+    margin-top: 5px; font-size: 16px;
 }
-select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto; }
+
+/* BOTONES (ARREGLADO: DEGRADADO FUERTE) */
+.btn-primary {
+    background: var(--brand-red-gradient) !important; /* FORZAR DEGRADADO */
+    color: white; border: none; padding: 12px 24px; border-radius: var(--radius-m);
+    font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4);
+    text-align: center; display: inline-block;
+}
+.btn-danger {
+    background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ff6b6b;
+    padding: 10px 20px; border-radius: var(--radius-m); cursor: pointer; font-weight: 600;
+}
+.btn-assign {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: white; padding: 10px; width: 100%; border-radius: var(--radius-m);
+    cursor: pointer; margin-top: 10px;
+}
 
 /* LAYOUT */
-.app-container { display: flex; height: 100vh; height: 100dvh; } /* 100dvh para móviles */
+.app-container { display: flex; height: 100vh; height: 100dvh; }
+.mobile-header { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 2000; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar { width: 260px; padding: 30px 20px; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; z-index: 2100; transition: transform 0.3s; }
+.main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
 
-.mobile-header {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-    z-index: 2000; align-items: center; justify-content: space-between; padding: 0 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 0;
-}
-.mobile-menu-btn { background: transparent; border: none; color: var(--brand-red); font-size: 1.8rem; padding: 5px; cursor: pointer; }
-.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1900; backdrop-filter: blur(5px); }
-
-.sidebar {
-    width: 260px; padding: 30px 20px; display: flex; flex-direction: column;
-    border-right: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; z-index: 2100;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 .nav-btn {
     background: transparent; border: none; color: var(--text-muted); width: 100%;
     text-align: left; padding: 15px; cursor: pointer; font-size: 1rem; margin-bottom: 5px;
-    border-radius: 10px; display: flex; align-items: center; gap: 12px; transition: 0.2s;
+    border-radius: 10px; display: flex; align-items: center; gap: 12px;
 }
-.nav-btn.active { background: rgba(211, 47, 47, 0.15); color: white; border: 1px solid rgba(211, 47, 47, 0.3); }
+.nav-btn.active { background: rgba(211, 47, 47, 0.2); color: white; border: 1px solid var(--brand-red); }
 
-.main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
-.glass-header { margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:15px; align-items:center;}
-
-/* BOTONES */
-.btn-primary {
-    background: var(--brand-red-gradient); color: white; border: none; padding: 12px 24px;
-    border-radius: var(--radius-m); font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
-}
-.btn-danger {
-    background: rgba(211, 47, 47, 0.15); border: 1px solid var(--brand-red); color: #ff8a80;
-    padding: 10px 20px; border-radius: var(--radius-m); cursor: pointer; font-weight: 600; display:flex; align-items:center; gap:8px;
-}
-.btn-danger:hover { background: var(--brand-red); color: white; }
-
-/* GRID & CARDS */
+/* GRID */
 .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-.card { border-radius: var(--radius-l); padding: 20px; display: flex; flex-direction: column; transition: transform 0.2s; }
-.card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.3); }
+.card { border-radius: 16px; padding: 20px; display: flex; flex-direction: column; }
 .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 
-/* --- MODAL FULL SCREEN (FIX IPHONE) --- */
-.modal {
-    display: none; position: fixed; z-index: 3000; left: 0; top: 0;
-    width: 100%; height: 100%; background: rgba(0,0,0,0.95);
+/* --- PANTALLA COMPLETA PARA PLAN (Full Screen Overlay) --- */
+.full-screen-modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; z-index: 5000; /* Por encima de todo */
+    flex-direction: column;
 }
-.modal-content {
-    background: #0a0a0a; /* Fondo sólido */
-    margin: 2% auto; width: 95%; max-width: 900px; height: 96%;
-    border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-    display: flex; flex-direction: column; overflow: hidden; /* El contenedor no scrollea */
+.fs-header {
+    height: 60px; background: rgba(20,20,20,0.95); border-bottom: 1px solid #333;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+    flex-shrink: 0;
 }
-.modal-header-fixed {
-    padding: 15px 20px; background: rgba(20,20,20,0.95); border-bottom: 1px solid rgba(255,255,255,0.1);
-    display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+.fs-body {
+    flex: 1; overflow-y: auto; padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%;
+    padding-bottom: 100px; /* Espacio extra al final */
 }
-.modal-body {
-    padding: 20px; overflow-y: auto; flex-grow: 1; -webkit-overflow-scrolling: touch;
-    padding-bottom: 100px; /* Espacio extra final */
-}
-.close-btn {
-    background: var(--brand-red); border: none; color: white; width: 35px; height: 35px;
-    border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+.fs-close-btn {
+    background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px;
+    border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px;
 }
 
-/* DETALLE DIETA */
+/* OTROS MODALES (Popups normales) */
+.modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+.modal-content { background: #111; margin: 5% auto; padding: 30px; width: 90%; border-radius: 20px; border: 1px solid #333; max-height: 90vh; overflow-y: auto; position: relative; }
+.close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+
+/* PLAN DETAILS */
 .diet-hero { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-bottom: 30px; }
-.meal-section { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.meal-section { background: rgba(255,255,255,0.03); border: 1px solid #333; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
 .meal-title { color: var(--brand-red); margin-bottom: 15px; font-weight: 800; text-transform: uppercase; display:flex; justify-content:space-between; }
-.option-card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 3px solid #333; }
+.option-card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #333; }
 .warning-box { background: rgba(255, 152, 0, 0.1); border-left: 4px solid #f57c00; padding: 15px; margin: 15px 0; border-radius: 4px; color: #ffcc80; }
-.hydration-box { background: rgba(33, 150, 243, 0.1); border: 1px solid rgba(33, 150, 243, 0.3); color: #64b5f6; padding: 15px; border-radius: 8px; display: flex; gap: 10px; align-items: center; }
+.hydration-box { background: rgba(33, 150, 243, 0.1); border: 1px solid #2196f3; color: #64b5f6; padding: 15px; border-radius: 8px; display: flex; gap: 10px; align-items: center; }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
     .app-container { padding-top: 60px; }
     .mobile-header { display: flex; }
-    .sidebar { position: fixed; height: 100%; top: 0; left: 0; transform: translateX(-105%); width: 85%; max-width: 300px; }
+    .sidebar { position: fixed; height: 100%; transform: translateX(-105%); width: 85%; }
     .sidebar.active { transform: translateX(0); }
     .overlay.active { display: block; }
     .diet-hero { grid-template-columns: 1fr; }
-    
-    /* MODAL MÓVIL FULL SCREEN REAL */
-    .modal-content {
-        width: 100%; height: 100%; max-width: 100%; margin: 0; border-radius: 0; border: none;
-    }
-    .modal-header-fixed { padding-top: 60px; /* Espacio para barra notch/header si fuera necesario */ }
+    .fs-body { padding: 15px; }
 }

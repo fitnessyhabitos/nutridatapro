@@ -19,9 +19,8 @@ const auth = getAuth(app);
 let currentUser = null;
 let userData = null;
 let isAdmin = false;
-let currentChart = null;
 let dietToAssign = null;
-// 👇 TU EMAIL AQUÍ 👇
+// ✅ CORREO ACTUALIZADO
 const ADMIN_EMAIL = "toni@nutridatapro.es"; 
 
 // --- AUTH ---
@@ -49,53 +48,23 @@ document.getElementById('registerForm').addEventListener('submit', async(e)=>{e.
 window.logoutApp=()=>signOut(auth);
 window.toggleAuthMode=()=>{const l=document.getElementById('loginBox'), r=document.getElementById('registerBox'); l.style.display=l.style.display==='none'?'block':'none'; r.style.display=r.style.display==='none'?'block':'none';};
 
-// --- CREADOR MANUAL AVANZADO ---
-window.createManualDiet = async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('mdName').value;
-    const kcal = document.getElementById('mdKcal').value;
-    const cat = document.getElementById('mdCat').value;
-
-    const getOptions = (prefix) => {
-        const opts = [];
-        const a = document.getElementById(prefix + '_A').value;
-        const b = document.getElementById(prefix + '_B').value;
-        const c = document.getElementById(prefix + '_C').value;
-        if(a) opts.push({ title: "Opción A", desc: a });
-        if(b) opts.push({ title: "Opción B", desc: b });
-        if(c) opts.push({ title: "Opción C", desc: c });
-        if(opts.length === 0) opts.push({ title: "Opción Única", desc: "Según macros." });
-        return opts;
-    };
-
-    const manualDiet = {
-        name, category: cat, calories: kcal, mealsPerDay: 3, isAdLibitum: false, 
-        description: "Plan personalizado creado manualmente.",
-        macros: {p:30,c:40,f:30}, // Macros default
-        plan: {
-            breakfast: getOptions('mdBk'),
-            lunch: getOptions('mdLn'),
-            dinner: getOptions('mdDn'),
-            snack: [] 
-        }
-    };
-
-    try {
-        await addDoc(collection(db, "diet_templates"), manualDiet);
-        closeModal('manualDietModal'); 
-        alert("✅ Dieta manual guardada."); 
-        loadDietsAdmin();
-    } catch (error) { alert("Error: " + error.message); }
-};
-
-// --- VISUALIZADOR DIETA (CON BOTÓN DE ASIGNAR) ---
+// --- VISUALIZADOR (GRÁFICO CON GRAMOS) ---
 window.previewDietVisual = (diet) => {
+    // Abrir modal PANTALLA COMPLETA
+    document.getElementById('dietViewModal').style.display = 'flex';
+    
     const container = document.getElementById('diet-detail-content');
     const chartId = `chart-${Math.random().toString(36).substr(2,9)}`;
     const guide = dietGuides[diet.category] || dietGuides["Volumen"];
     const kcalDisplay = diet.isAdLibitum ? 'SACIEDAD' : `${diet.calories} kcal`;
 
+    // Cálculo Gramos
     const total = parseInt(diet.calories) || 2000;
+    const pGrams = Math.round((total * (diet.macros.p/100)) / 4);
+    const cGrams = Math.round((total * (diet.macros.c/100)) / 4);
+    const fGrams = Math.round((total * (diet.macros.f/100)) / 9);
+
+    // Kcal por comida
     const bk = Math.round(total * 0.25); const ln = Math.round(total * 0.35); const sn = Math.round(total * 0.15); const dn = Math.round(total * 0.25);
 
     let mealsHtml = '';
@@ -107,13 +76,8 @@ window.previewDietVisual = (diet) => {
     if(diet.plan.snack) mealsHtml += `<div class="meal-section">${header('bi-apple','SNACK',sn)}${renderOptions(diet.plan.snack)}</div>`;
     if(diet.plan.dinner) mealsHtml += `<div class="meal-section">${header('bi-moon-stars-fill','CENA',dn)}${renderOptions(diet.plan.dinner)}</div>`;
 
-    // BOTÓN ADMIN DE ASIGNAR
-    const adminActionBtn = isAdmin ? 
-        `<div style="margin-top:40px; padding-top:20px; border-top:1px solid #333;">
-            <button class="btn-primary" style="padding:15px; font-size:1.1rem; background:linear-gradient(135deg, #2E7D32, #1B5E20);" onclick='openClientSelector(${JSON.stringify(diet).replace(/'/g, "&apos;")})'>
-                <i class="bi bi-person-check-fill"></i> ASIGNAR A UN ATLETA
-            </button>
-         </div>` : '';
+    // BOTÓN ASIGNAR (Visible solo Admin)
+    const adminActionBtn = isAdmin ? `<div style="margin-top:30px; border-top:1px solid #333; padding-top:20px;"><button class="btn-primary" onclick='openClientSelector(${JSON.stringify(diet).replace(/'/g, "&apos;")})'>📲 ASIGNAR A ATLETA</button></div>` : '';
 
     container.innerHTML = `
         <div class="diet-hero">
@@ -127,7 +91,7 @@ window.previewDietVisual = (diet) => {
                 <div class="hydration-box"><i class="bi bi-droplet-fill"></i><div><strong>Al despertar:</strong><br>500ml agua + pizca sal + limón.</div></div>
             </div>
             <div class="glass-panel" style="padding:20px; border-radius:16px; text-align:center; min-height:220px; display:flex; justify-content:center; align-items:center;">
-                <div style="height:160px; width:160px; position:relative;"><canvas id="${chartId}"></canvas></div>
+                <div style="height:180px; width:100%; position:relative;"><canvas id="${chartId}"></canvas></div>
             </div>
         </div>
         ${mealsHtml}
@@ -142,11 +106,20 @@ window.previewDietVisual = (diet) => {
 
     setTimeout(() => {
         const ctx = document.getElementById(chartId);
-        if(ctx) new Chart(ctx, { type: 'doughnut', data: { labels: ['Prot', 'Carb', 'Grasa'], datasets: [{ data: [diet.macros.p, diet.macros.c, diet.macros.f], backgroundColor: ['#D32F2F', '#ffffff', '#333333'], borderWidth: 0 }] }, options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:true, position:'bottom', labels:{color:'#ccc'}}}, cutout:'65%' } });
+        if(ctx) {
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [`Proteína: ${pGrams}g (${diet.macros.p}%)`, `Carbo: ${cGrams}g (${diet.macros.c}%)`, `Grasa: ${fGrams}g (${diet.macros.f}%)`],
+                    datasets: [{ data: [diet.macros.p, diet.macros.c, diet.macros.f], backgroundColor: ['#D32F2F', '#ffffff', '#333333'], borderWidth: 0 }]
+                },
+                options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:true, position:'bottom', labels:{color:'#ccc'}}}, cutout:'60%' }
+            });
+        }
     }, 250);
 }
 
-// --- LOGICA DE ASIGNACIÓN ---
+// --- LOGICA ASIGNAR ---
 window.openClientSelector = async (diet) => {
     dietToAssign = diet; 
     const list = document.getElementById('clientSelectorList');
@@ -179,8 +152,35 @@ window.assignDietFromModal = async (clientId, clientName) => {
     history.unshift({ name: dietToAssign.name, date: new Date().toLocaleDateString(), category: dietToAssign.category });
     await updateDoc(clientRef, { currentDietName: dietToAssign.name, currentDietData: dietToAssign, dietHistory: history });
     
-    alert(`✅ ¡Plan asignado a ${clientName}!`);
+    alert(`✅ Asignado a ${clientName}`);
     closeModal('clientSelectorModal'); closeModal('dietViewModal');
+};
+
+// --- CREADOR MANUAL ---
+window.createManualDiet = async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('mdName').value;
+    const kcal = document.getElementById('mdKcal').value;
+    const cat = document.getElementById('mdCat').value;
+
+    const getOptions = (prefix) => {
+        const opts = [];
+        const a = document.getElementById(prefix + '_A').value;
+        const b = document.getElementById(prefix + '_B').value;
+        const c = document.getElementById(prefix + '_C').value;
+        if(a) opts.push({ title: "Opción A", desc: a });
+        if(b) opts.push({ title: "Opción B", desc: b });
+        if(c) opts.push({ title: "Opción C", desc: c });
+        if(opts.length === 0) opts.push({ title: "Opción Única", desc: "A elección." });
+        return opts;
+    };
+
+    const manualDiet = {
+        name, category: cat, calories: kcal, mealsPerDay: 3, isAdLibitum: false, description: "Plan personalizado.", macros: {p:30,c:40,f:30},
+        plan: { breakfast: getOptions('mdBk'), lunch: getOptions('mdLn'), dinner: getOptions('mdDn'), snack: [] }
+    };
+
+    try { await addDoc(collection(db, "diet_templates"), manualDiet); closeModal('manualDietModal'); alert("✅ Guardada."); loadDietsAdmin(); } catch (error) { alert("Error: " + error.message); }
 };
 
 // ... RESTO DE FUNCIONES (ADMIN/RESET) ...
@@ -195,21 +195,10 @@ window.resetDatabaseManual = async () => {
     } catch(e) { alert("Error: "+e.message); }
 };
 
-function initAdminDashboard() {
-    document.getElementById('adminNav').style.display='block'; showAdminSection('clients');
-    const tb = document.querySelector('#diets-section .toolbar');
-    if(!document.getElementById('filterCategory')){
-        const sel = document.createElement('select'); sel.id = 'filterCategory'; sel.className = 'glass-input'; sel.style.width = 'auto'; sel.style.margin = '0';
-        sel.innerHTML = `<option value="all">Todas</option><option value="Déficit">Déficit</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option><option value="Senior">Senior</option>`;
-        sel.onchange = filterDiets; tb.insertBefore(sel, document.getElementById('searchKcal').parentNode);
-    }
-    if(!document.getElementById('btnManual')){
-        const b=document.createElement('button'); b.id='btnManual'; b.className='btn-primary'; b.innerHTML='<i class="bi bi-plus-lg"></i> Manual'; b.style.marginLeft='10px'; b.onclick=()=>openModal('manualDietModal'); tb.appendChild(b);
-    }
-}
+function initAdminDashboard() { document.getElementById('adminNav').style.display='block'; showAdminSection('clients'); }
 window.showAdminSection = (id) => { document.getElementById('adminView').style.display='block'; document.getElementById('athleteView').style.display='none'; ['clients','diets','inbox'].forEach(s=>document.getElementById(s+'-section').style.display='none'); document.getElementById(id+'-section').style.display='block'; if(id==='clients')renderClientsAdmin(); if(id==='diets')loadDietsAdmin(); if(id==='inbox')renderInbox(); };
 async function loadDietsAdmin() { const g=document.getElementById('diets-grid'); g.innerHTML='Cargando...'; const q=await getDocs(collection(db,"diet_templates")); window.allDietsCache=[]; q.forEach(d=>window.allDietsCache.push({firestoreId:d.id,...d.data()})); renderDietsListAdmin(window.allDietsCache); }
-function renderDietsListAdmin(l) { const g=document.getElementById('diets-grid'); g.innerHTML=''; l.sort((a,b)=>(parseInt(a.calories)||9999)-(parseInt(b.calories)||9999)); l.forEach(d=>{ let c='#333'; if(d.category==='Déficit')c='#D32F2F'; if(d.category==='Volumen')c='#2E7D32'; if(d.category==='Salud')c='#F57C00'; if(d.category==='Senior')c='#0288D1'; g.innerHTML+=`<div class="card"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span class="status-badge" style="background:${c}">${d.category}</span><span class="status-badge" style="border:1px solid #555">${d.isAdLibitum?'SACIEDAD':d.calories+' kcal'}</span></div><h3>${d.name}</h3><p>${d.description.substring(0,50)}...</p><button class="btn-assign" onclick='previewDietVisual(${JSON.stringify(d).replace(/'/g,"&apos;")}); openModal("dietViewModal");'><i class="bi bi-eye"></i> Ver Plan</button></div>`; }); }
+function renderDietsListAdmin(l) { const g=document.getElementById('diets-grid'); g.innerHTML=''; l.sort((a,b)=>(parseInt(a.calories)||9999)-(parseInt(b.calories)||9999)); l.forEach(d=>{ let c='#333'; if(d.category==='Déficit')c='#D32F2F'; if(d.category==='Volumen')c='#2E7D32'; if(d.category==='Salud')c='#F57C00'; if(d.category==='Senior')c='#0288D1'; g.innerHTML+=`<div class="card"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span class="status-badge" style="background:${c}">${d.category}</span><span class="status-badge" style="border:1px solid #555">${d.isAdLibitum?'SACIEDAD':d.calories+' kcal'}</span></div><h3>${d.name}</h3><p>${d.description.substring(0,50)}...</p><button class="btn-assign" onclick='previewDietVisual(${JSON.stringify(d).replace(/'/g,"&apos;")});'><i class="bi bi-eye"></i> Ver Plan</button></div>`; }); }
 window.filterDiets = () => { const term = document.getElementById('searchKcal').value.toLowerCase(); const cat = document.getElementById('filterCategory') ? document.getElementById('filterCategory').value : 'all'; if(!window.allDietsCache) return; const filtered = window.allDietsCache.filter(d => { const matchText = d.name.toLowerCase().includes(term) || d.calories.toString().includes(term); const matchCat = cat === 'all' || d.category === cat; return matchText && matchCat; }); renderDietsListAdmin(filtered); };
 async function renderClientsAdmin(){ const g=document.getElementById('clients-grid'); g.innerHTML='Cargando...'; const q=await getDocs(collection(db,"clientes")); g.innerHTML=''; q.forEach(d=>{const c=d.data(); g.innerHTML+=`<div class="card"><h3>${c.alias}</h3><p>${c.name}</p><small style="color:#888">Plan: <span style="color:var(--brand-red)">${c.currentDietName||'Ninguno'}</span></small><button class="btn-assign" onclick="openDietAssignModal('${d.id}','${c.alias}')">Asignar</button></div>`;}); }
 window.openDietAssignModal=async(id,alias)=>{const n=prompt("Nombre exacto:"); if(n){const q=query(collection(db,"diet_templates"),where("name","==",n)); const s=await getDocs(q); if(!s.empty){const d=s.docs[0].data(); await updateDoc(doc(db,"clientes",id),{currentDietName:d.name,currentDietData:d, dietHistory:(await getDoc(doc(db,"clientes",id))).data().dietHistory||[]}); alert("Asignada"); renderClientsAdmin();}else alert("No encontrada");}};

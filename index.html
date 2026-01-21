@@ -83,11 +83,20 @@
                     <header class="glass-header wrap-header">
                         <h1>Biblioteca NDP</h1>
                         <div class="toolbar">
+                            <select id="filterCategory" class="glass-input" style="width:auto; margin:0;" onchange="filterDiets()">
+                                <option value="all">Todas</option>
+                                <option value="Déficit">Déficit</option>
+                                <option value="Volumen">Volumen</option>
+                                <option value="Salud">Salud</option>
+                                <option value="Senior">Senior</option>
+                            </select>
+                            
                             <div class="search-box glass-input" style="width:auto; display:flex; align-items:center;">
                                 <i class="bi bi-search"></i>
                                 <input type="text" id="searchKcal" placeholder="Buscar..." oninput="filterDiets()" style="border:none;">
                             </div>
                             <button class="btn-danger" onclick="resetDatabaseManual()"><i class="bi bi-database-fill-down"></i> Reset DB</button>
+                            <button class="btn-primary" onclick="openModal('manualDietModal')"><i class="bi bi-plus-lg"></i> Manual</button>
                         </div>
                     </header>
                     <div class="grid-container" id="diets-grid"></div>
@@ -118,24 +127,21 @@
         </main>
     </div>
 
-    <div id="dietViewModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header-fixed">
-                <h3 style="margin:0; color:white;">Detalle del Plan</h3>
-                <button class="close-btn" onclick="closeModal('dietViewModal')"><i class="bi bi-x-lg"></i></button>
-            </div>
-            <div class="modal-body" id="diet-detail-content"></div>
+    <div id="dietViewModal" class="full-screen-modal">
+        <div class="fs-header">
+            <h3 style="margin:0; color:white; display:flex; align-items:center; gap:10px;"><i class="bi bi-journal-medical"></i> Detalle del Plan</h3>
+            <button class="fs-close-btn" onclick="closeModal('dietViewModal')"><i class="bi bi-x-lg"></i> Cerrar</button>
         </div>
+        <div class="fs-body" id="diet-detail-content"></div>
     </div>
 
     <div id="clientSelectorModal" class="modal">
         <div class="modal-content" style="max-width:500px; height:80vh;">
-            <div class="modal-header-fixed">
-                <h3 style="margin:0; color:white;">Seleccionar Atleta</h3>
-                <button class="close-btn" onclick="closeModal('clientSelectorModal')"><i class="bi bi-x-lg"></i></button>
+            <div style="padding:20px; border-bottom:1px solid #333; display:flex; justify-content:space-between;">
+                <h3 style="margin:0; color:white;">Asignar a...</h3>
+                <button class="close-btn" onclick="closeModal('clientSelectorModal')"><i class="bi bi-x"></i></button>
             </div>
-            <div class="modal-body">
-                <p style="color:#aaa; margin-bottom:15px;">Pulsa sobre un atleta para asignarle este plan inmediatamente.</p>
+            <div class="modal-body" style="padding:20px;">
                 <div id="clientSelectorList" class="list-container"></div>
             </div>
         </div>
@@ -178,38 +184,17 @@
     <div id="manualDietModal" class="modal">
         <div class="modal-content glass-panel" style="max-width:700px; margin:auto; height:auto; max-height:90vh;">
             <span class="close" onclick="closeModal('manualDietModal')">&times;</span>
-            <h2 style="color:white; margin-bottom:20px;">Diseñador de Plan Manual</h2>
-            
+            <h2 style="color:white; margin-bottom:20px;">Diseñador Manual</h2>
             <form onsubmit="createManualDiet(event)">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
-                    <div><label>Nombre</label><input type="text" id="mdName" placeholder="Ej: Plan Juan" class="glass-input" required></div>
-                    <div><label>Kcal</label><input type="number" id="mdKcal" placeholder="2000" class="glass-input" required></div>
+                    <div><label>Nombre</label><input type="text" id="mdName" class="glass-input" required></div>
+                    <div><label>Kcal</label><input type="number" id="mdKcal" class="glass-input" required></div>
                 </div>
-                
-                <label>Categoría (Define los Tips Automáticos)</label>
-                <select id="mdCat" class="glass-input" style="margin-bottom:25px;">
-                    <option value="Déficit">Déficit (Quema Grasa)</option>
-                    <option value="Volumen">Volumen (Ganancia Muscular)</option>
-                    <option value="Salud">Salud / Anti-inflamatoria</option>
-                    <option value="Senior">Senior / Fácil</option>
-                </select>
-                
-                <h4 style="color:var(--brand-red); border-bottom:1px solid #333; padding-bottom:5px; margin-top:20px;">🥐 Desayuno</h4>
-                <input type="text" id="mdBk_A" placeholder="Opción A..." class="glass-input">
-                <input type="text" id="mdBk_B" placeholder="Opción B..." class="glass-input">
-                <input type="text" id="mdBk_C" placeholder="Opción C..." class="glass-input">
-
-                <h4 style="color:var(--brand-red); border-bottom:1px solid #333; padding-bottom:5px; margin-top:20px;">🍗 Comida</h4>
-                <input type="text" id="mdLn_A" placeholder="Opción A..." class="glass-input">
-                <input type="text" id="mdLn_B" placeholder="Opción B..." class="glass-input">
-                <input type="text" id="mdLn_C" placeholder="Opción C..." class="glass-input">
-
-                <h4 style="color:var(--brand-red); border-bottom:1px solid #333; padding-bottom:5px; margin-top:20px;">🐟 Cena</h4>
-                <input type="text" id="mdDn_A" placeholder="Opción A..." class="glass-input">
-                <input type="text" id="mdDn_B" placeholder="Opción B..." class="glass-input">
-                <input type="text" id="mdDn_C" placeholder="Opción C..." class="glass-input">
-                
-                <button type="submit" class="btn-primary" style="width:100%; margin-top:30px; padding:15px; font-size:1.1rem;">Guardar en Biblioteca</button>
+                <label>Categoría</label><select id="mdCat" class="glass-input" style="margin-bottom:25px;"><option value="Déficit">Déficit</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option><option value="Senior">Senior</option></select>
+                <h4 style="color:var(--brand-red); margin-top:20px;">Desayuno</h4><input type="text" id="mdBk_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdBk_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdBk_C" placeholder="Opción C" class="glass-input">
+                <h4 style="color:var(--brand-red); margin-top:20px;">Comida</h4><input type="text" id="mdLn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdLn_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdLn_C" placeholder="Opción C" class="glass-input">
+                <h4 style="color:var(--brand-red); margin-top:20px;">Cena</h4><input type="text" id="mdDn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdDn_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdDn_C" placeholder="Opción C" class="glass-input">
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:30px; padding:15px;">Guardar</button>
             </form>
         </div>
     </div>
