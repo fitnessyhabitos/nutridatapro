@@ -18,7 +18,8 @@
 body {
     margin: 0; font-family: 'Inter', sans-serif;
     background-color: var(--bg-dark); color: var(--text-main);
-    overflow: hidden; /* Evita scroll global */
+    overflow: hidden; /* Evita rebote elástico en iOS */
+    padding-top: env(safe-area-inset-top); /* Color de fondo en la barra de estado */
 }
 
 /* FONDO */
@@ -38,10 +39,9 @@ body {
     border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: var(--radius-m);
     margin-top: 5px; font-size: 16px; appearance: none; -webkit-appearance: none;
 }
-/* Icono select blanco */
 select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto; }
 
-/* BUSCADOR DARK */
+/* BUSCADOR */
 .search-box {
     display: flex; align-items: center;
     background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2);
@@ -70,10 +70,14 @@ select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xml
     cursor: pointer; margin-top: 10px;
 }
 
-/* LAYOUT */
+/* LAYOUT GENERAL */
 .app-container { display: flex; height: 100vh; height: 100dvh; }
-.mobile-header { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 2000; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.sidebar { width: 260px; padding: 30px 20px; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; z-index: 2100; transition: transform 0.3s; }
+
+.sidebar { 
+    width: 260px; padding: 30px 20px; display: flex; flex-direction: column; 
+    border-right: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; z-index: 2100; transition: transform 0.3s; 
+}
+
 .main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
 .glass-header { margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:15px; align-items:center;}
 
@@ -90,10 +94,17 @@ select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xml
 .card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.3); }
 .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 
-/* --- PANTALLA COMPLETA PARA PLAN (Full Screen) --- */
+/* MODALES POPUP */
+.modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+.modal-content { background: #111; margin: 5% auto; padding: 30px; width: 90%; border-radius: 20px; border: 1px solid #333; max-height: 90vh; overflow-y: auto; position: relative; }
+.close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+
+/* MODAL FULL SCREEN (VER PLAN) */
 .full-screen-modal {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: #000; z-index: 5000; flex-direction: column;
+    /* FIX IPHONE: Asegura que empiece debajo del área segura */
+    padding-top: env(safe-area-inset-top);
 }
 .fs-header {
     height: 60px; background: rgba(20,20,20,0.95); border-bottom: 1px solid #333;
@@ -101,23 +112,17 @@ select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xml
 }
 .fs-body {
     flex: 1; overflow-y: auto; padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%;
-    padding-bottom: 100px;
+    padding-bottom: 100px; -webkit-overflow-scrolling: touch;
 }
 .fs-close-btn {
     background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px;
     border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px;
 }
 
-/* OTROS MODALES (Popups) */
-.modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-.modal-content { background: #111; margin: 5% auto; padding: 30px; width: 90%; border-radius: 20px; border: 1px solid #333; max-height: 90vh; overflow-y: auto; position: relative; }
-.close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
-
-/* FIX CRÍTICO: CLIENT SELECTOR SOBRE PLAN */
-/* Al darle z-index 6000, se asegura que quede ENCIMA del plan (que tiene 5000) */
+/* MODAL SELECCION CLIENTE (Z-INDEX ALTO) */
 #clientSelectorModal { z-index: 6000 !important; }
 
-/* DETALLE DIETA */
+/* PLAN DETAILS */
 .diet-hero { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-bottom: 30px; }
 .meal-section { background: rgba(255,255,255,0.03); border: 1px solid #333; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
 .meal-title { color: var(--brand-red); margin-bottom: 15px; font-weight: 800; text-transform: uppercase; display:flex; justify-content:space-between; }
@@ -125,16 +130,37 @@ select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xml
 .warning-box { background: rgba(255, 152, 0, 0.1); border-left: 4px solid #f57c00; padding: 15px; margin: 15px 0; border-radius: 4px; color: #ffcc80; }
 .hydration-box { background: rgba(33, 150, 243, 0.1); border: 1px solid rgba(33, 150, 243, 0.3); color: #64b5f6; padding: 15px; border-radius: 8px; display: flex; gap: 10px; align-items: center; }
 
-/* RESPONSIVE */
+/* --- RESPONSIVE IPHONE --- */
 @media (max-width: 768px) {
-    .app-container { padding-top: 60px; }
-    .mobile-header { display: flex; }
-    .sidebar { position: fixed; height: 100%; transform: translateX(-105%); width: 85%; max-width: 300px; }
+    /* AJUSTE CABECERA MÓVIL AL ÁREA SEGURA */
+    .mobile-header { 
+        display: flex; position: fixed; top: 0; left: 0; width: 100%; 
+        height: calc(60px + env(safe-area-inset-top)); /* Sumar altura de barra estado */
+        padding-top: env(safe-area-inset-top); /* Empujar contenido abajo */
+        z-index: 2000; align-items: center; justify-content: space-between; padding-left: 15px; padding-right: 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.1); 
+    }
+
+    /* AJUSTE CUERPO DE LA APP */
+    .app-container { 
+        /* Empezar después de la cabecera */
+        padding-top: calc(60px + env(safe-area-inset-top)); 
+    }
+
+    .sidebar { position: fixed; height: 100%; transform: translateX(-105%); width: 85%; max-width: 300px; padding-top: calc(30px + env(safe-area-inset-top)); }
     .sidebar.active { transform: translateX(0); }
     .overlay.active { display: block; }
+    
     .diet-hero { grid-template-columns: 1fr; }
     
-    /* Modales en móvil a pantalla completa */
+    /* MODALES MÓVIL */
+    .modal { padding-top: env(safe-area-inset-top); } /* Evitar que el modal se meta bajo la barra */
     .modal-content { width: 100%; height: 100%; max-width: 100%; margin: 0; border-radius: 0; border: none; }
-    .fs-body { padding: 15px; }
+    
+    /* MODAL FULL SCREEN */
+    .full-screen-modal { padding-top: 0; background: #000; }
+    .fs-header {
+        padding-top: calc(15px + env(safe-area-inset-top)); /* Cabecera respeta notch */
+        height: auto; min-height: 60px;
+    }
 }
