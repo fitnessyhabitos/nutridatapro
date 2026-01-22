@@ -4,7 +4,7 @@
     --brand-red-gradient: linear-gradient(135deg, #D32F2F 0%, #9A0007 100%);
     --text-main: #ffffff;
     --text-muted: #a0a0a0;
-    --glass-bg: rgba(20, 20, 20, 0.92);
+    --glass-bg: rgba(20, 20, 20, 0.95); /* Más opaco */
     --glass-border: 1px solid rgba(255, 255, 255, 0.12);
     --radius-m: 12px;
 }
@@ -43,10 +43,8 @@ body {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 20px; 
     position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-    background: rgba(15, 15, 15, 0.95); 
+    background: rgba(15, 15, 15, 0.98); 
     border-bottom: 1px solid rgba(255,255,255,0.1);
-    backdrop-filter: blur(15px);
-    /* Safe Area Top + Espacio visual */
     padding-top: calc(env(safe-area-inset-top) + 15px);
     padding-bottom: 15px;
 }
@@ -59,32 +57,35 @@ body {
 .nav-link.active i { color: var(--brand-red); }
 .btn-icon { background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; }
 
-/* --- MAIN CONTENT (AQUÍ ESTÁ EL FIX) --- */
+/* MAIN CONTENT */
 .main-content {
-    /* AUMENTADO A 130px para asegurar que baje lo suficiente */
+    /* Espacio superior generoso para que no choque con el header */
     padding-top: calc(130px + env(safe-area-inset-top)); 
-    padding-bottom: 100px;
+    /* Espacio inferior EXTRA GENEROSO para que la barra no tape el final */
+    padding-bottom: 140px;
     height: 100vh; overflow-y: auto; 
     width: 100%; max-width: 1200px; margin: 0 auto;
     padding-left: 15px; padding-right: 15px;
     -webkit-overflow-scrolling: touch;
 }
 
-/* MOBILE NAV */
+/* --- BARRA INFERIOR MÁS FINA --- */
 .mobile-bottom-nav {
     display: none; position: fixed; bottom: 0; left: 0; width: 100%; 
     background: rgba(10, 10, 10, 0.98); 
     border-top: 1px solid rgba(255,255,255,0.15);
-    backdrop-filter: blur(20px); z-index: 1000;
+    z-index: 1000;
     justify-content: space-around; align-items: center;
-    padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
-    padding-top: 15px;
-    height: calc(60px + env(safe-area-inset-bottom) + 20px); 
+    /* Solo sumamos el safe-area, sin padding extra para que sea fina */
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: 10px;
+    /* Altura total = 50px + safe area */
+    height: calc(50px + env(safe-area-inset-bottom)); 
 }
-.mobile-nav-btn { background: none; border: none; color: #666; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; gap: 6px; font-weight: 600; letter-spacing: 0.5px; }
-.mobile-nav-btn i { font-size: 1.4rem; transition: 0.2s; margin-bottom: 2px; }
+.mobile-nav-btn { background: none; border: none; color: #666; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; gap: 4px; font-weight: 600; letter-spacing: 0.5px; height: 100%;}
+.mobile-nav-btn i { font-size: 1.3rem; transition: 0.2s; margin-bottom: 2px; }
 .mobile-nav-btn.active { color: white; }
-.mobile-nav-btn.active i { color: var(--brand-red); transform: translateY(-3px); }
+.mobile-nav-btn.active i { color: var(--brand-red); transform: translateY(-2px); }
 
 /* COMPONENTES */
 .btn-primary { background: var(--brand-red-gradient); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3); }
@@ -121,25 +122,15 @@ body {
 .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border-radius: 50%; width: 30px; height: 30px; border: none; color: #fff; cursor: pointer; display:flex; align-items:center; justify-content:center;}
 #clientSelectorModal { z-index: 6000; }
 
-/* RESPONSIVE MÓVIL */
 @media (max-width: 768px) {
     .desktop-nav { display: none; }
     .mobile-bottom-nav { display: flex; }
-    
-    /* FIX MÓVIL: Aumento espacio superior para librar la cabecera */
+    /* Ajuste fino móvil */
     .main-content { 
         padding-top: calc(110px + env(safe-area-inset-top)); 
-        padding-bottom: 90px;
-        padding-left: 15px; 
-        padding-right: 15px; 
+        padding-bottom: 140px; /* MUCHO espacio abajo */
+        padding-left: 15px; padding-right: 15px; 
     }
-    
-    /* FIX CABECERA MÓVIL: Respetar padding lateral y superior */
-    .app-header { 
-        padding-left: 15px; 
-        padding-right: 15px;
-        /* IMPORTANTE: No sobrescribir el padding-top calculado arriba */
-    }
-    
+    .app-header { padding-left: 15px; padding-right: 15px; }
     .diet-hero { grid-template-columns: 1fr; }
 }
