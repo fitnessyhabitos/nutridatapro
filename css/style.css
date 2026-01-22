@@ -73,7 +73,7 @@ html, body {
     max-width: 1200px; margin: 0 auto;
 }
 
-/* --- MOBILE NAV (SUPER BAJA Y FINA) --- */
+/* --- MOBILE NAV (PEGADA AL FONDO - ESTILO SAFARI) --- */
 .mobile-bottom-nav {
     display: none; 
     position: fixed; bottom: 0; left: 0; width: 100%; 
@@ -81,15 +81,15 @@ html, body {
     border-top: 1px solid rgba(255,255,255,0.15); 
     z-index: 9999; 
     
-    /* Alineación: Todo pegado al fondo */
     display: flex; justify-content: space-around; align-items: flex-end;
     
-    /* Padding mínimo estricto */
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-top: 0;
+    /* IGNORAMOS AREA SEGURA: Vamos a ras */
+    /* Solo 10px para que el icono no toque literalmente el final del cristal */
+    padding-bottom: 10px; 
+    padding-top: 0; 
     
-    /* Altura muy reducida para bajar la línea gris */
-    height: calc(40px + env(safe-area-inset-bottom)); 
+    /* Altura Fija pequeña: 60px totales */
+    height: 60px; 
 
     touch-action: none; overscroll-behavior: none;
 }
@@ -97,14 +97,10 @@ html, body {
 
 .mobile-nav-btn { 
     background: none; border: none; color: #777; flex: 1; 
-    /* Forzamos al contenido a irse abajo del todo */
     display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-    
     font-size: 0.55rem; font-weight: 500; 
     gap: 2px; 
     height: 100%; 
-    
-    /* Solo 2px de separación del borde/zona segura */
     padding-bottom: 2px;
 }
 .mobile-nav-btn i { font-size: 1.2rem; margin-bottom: 0; }
