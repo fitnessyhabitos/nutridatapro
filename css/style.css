@@ -78,7 +78,7 @@ body {
     /* Ajuste Fino */
     padding-top: 5px; 
     padding-bottom: env(safe-area-inset-bottom); 
-    height: calc(45px + env(safe-area-inset-bottom)); /* Altura reducida a 45px base */
+    height: calc(5px + env(safe-area-inset-bottom)); /* Altura reducida a 45px base */
     
     /* Bloqueo total de interacción de arrastre */
     touch-action: none; 
