@@ -85,7 +85,7 @@ html, body {
     padding-top: 6px; /* Menos espacio arriba (Antes era 12px) */
     
     /* Altura base reducida a 42px (Antes era 60px) */
-    height: calc(42px + env(safe-area-inset-bottom)); 
+    height: calc(10px + env(safe-area-inset-bottom)); 
 
     touch-action: none; 
     overscroll-behavior: none;
@@ -176,3 +176,4 @@ html, body {
     .diet-hero, .guide-grid { grid-template-columns: 1fr; }
 
 }
+
