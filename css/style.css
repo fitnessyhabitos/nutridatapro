@@ -70,26 +70,18 @@ html, body {
     max-width: 1200px; margin: 0 auto;
 }
 
-/* MOBILE NAV (SUPER FINA) */
+/* MOBILE NAV */
 .mobile-bottom-nav {
-    display: none; 
-    position: fixed; bottom: 0; left: 0; width: 100%; 
-    background: #000; 
-    border-top: 1px solid rgba(255,255,255,0.15); 
-    z-index: 10000; 
-    
+    display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid rgba(255,255,255,0.15); z-index: 9999; 
     display: flex; justify-content: space-around; align-items: flex-start;
-    
-    /* AJUSTES PARA HACERLA FINA: */
-    padding-bottom: env(safe-area-inset-bottom); /* Respeta el iPhone */
-    padding-top: 6px; /* Menos espacio arriba (Antes era 12px) */
-    
-    /* Altura base reducida a 42px (Antes era 60px) */
-    height: calc(10px + env(safe-area-inset-bottom)); 
-
-    touch-action: none; 
-    overscroll-behavior: none;
+    padding-bottom: env(safe-area-inset-bottom); padding-top: 12px;
+    height: auto; min-height: 60px; touch-action: none; overscroll-behavior: none;
 }
+@media (min-width: 769px) { .mobile-bottom-nav { display: none !important; } }
+.mobile-nav-btn { background: none; border: none; color: #777; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; gap: 4px; font-weight: 500; height: 40px; }
+.mobile-nav-btn i { font-size: 1.3rem; margin-bottom: 0; }
+.mobile-nav-btn.active { color: white; }
+.mobile-nav-btn.active i { color: var(--brand-red); }
 
 @media (min-width: 769px) { .mobile-bottom-nav { display: none !important; } }
 
@@ -176,4 +168,5 @@ html, body {
     .diet-hero, .guide-grid { grid-template-columns: 1fr; }
 
 }
+
 
