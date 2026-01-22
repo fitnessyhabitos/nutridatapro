@@ -11,7 +11,7 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-/* BLINDAJE IOS */
+/* BLINDAJE IOS (Scroll y Rebote) */
 html, body {
     margin: 0; padding: 0;
     width: 100%; height: 100%; height: 100dvh;
@@ -28,10 +28,12 @@ html, body {
 .blob-1 { width: 90vw; height: 90vw; background: radial-gradient(circle, var(--brand-red) 0%, transparent 70%); top: -20%; left: -20%; }
 .glass-overlay { position: absolute; top:0; left:0; width:100%; height:100%; backdrop-filter: blur(15px); z-index: -1; }
 
-/* LANDING */
+/* LANDING (LOGIN) */
 .landing-container { 
-    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; 
-    position: relative; z-index: 2000; overflow-y: auto; padding: 20px;
+    width: 100%; height: 100%; 
+    display: flex; align-items: center; justify-content: center; 
+    position: relative; z-index: 2000; 
+    overflow-y: auto; padding: 20px;
 }
 .login-card { width: 100%; max-width: 400px; padding: 30px; text-align: center; border-radius: 24px; background: rgba(30, 30, 30, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); }
 .login-logo { width: 70px; height: 70px; margin-bottom: 15px; border-radius: 15px; }
@@ -61,57 +63,73 @@ html, body {
 .nav-link.active { color: white; background: rgba(255,255,255,0.1); }
 .btn-icon { background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; }
 
-/* MAIN CONTENT */
+/* MAIN CONTENT (Scroll interno) */
 .main-content {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    padding-bottom: 90px; padding-top: calc(85px + env(safe-area-inset-top)); 
+    padding-bottom: 90px; 
+    padding-top: calc(85px + env(safe-area-inset-top)); 
     padding-left: 15px; padding-right: 15px;
     overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; 
     max-width: 1200px; margin: 0 auto;
 }
 
-/* MOBILE NAV */
+/* --- MOBILE NAV (ULTRA COMPACTA & PEGADA ABAJO) --- */
 .mobile-bottom-nav {
-    display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid rgba(255,255,255,0.15); z-index: 9999; 
-    display: flex; justify-content: space-around; align-items: flex-start;
-    padding-bottom: env(safe-area-inset-bottom); padding-top: 12px;
-    height: auto; min-height: 60px; touch-action: none; overscroll-behavior: none;
-}
-@media (min-width: 769px) { .mobile-bottom-nav { display: none !important; } }
-.mobile-nav-btn { background: none; border: none; color: #777; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; gap: 4px; font-weight: 500; height: 40px; }
-.mobile-nav-btn i { font-size: 1.3rem; margin-bottom: 0; }
-.mobile-nav-btn.active { color: white; }
-.mobile-nav-btn.active i { color: var(--brand-red); }
+    display: none; 
+    position: fixed; bottom: 0; left: 0; width: 100%; 
+    background: #000; /* Fondo sólido */
+    border-top: 1px solid rgba(255,255,255,0.15); 
+    z-index: 9999; 
+    
+    /* ALINEACIÓN INFERIOR PARA APROVECHAR ESPACIO */
+    display: flex; justify-content: space-around; align-items: flex-end;
+    
+    /* Padding mínimo: Solo lo que pide el iPhone + 6px de aire */
+    padding-bottom: calc(env(safe-area-inset-bottom) + 6px);
+    padding-top: 0; /* Sin techo */
+    
+    /* Altura total ajustada */
+    height: calc(42px + env(safe-area-inset-bottom)); 
 
+    touch-action: none; overscroll-behavior: none;
+}
 @media (min-width: 769px) { .mobile-bottom-nav { display: none !important; } }
 
 .mobile-nav-btn { 
-    background: none; border: none; color: #666; flex: 1; 
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
+    background: none; border: none; color: #777; flex: 1; 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end; /* Iconos abajo */
     
-    /* Texto más pequeño */
-    font-size: 0.55rem; 
-    font-weight: 600; 
-    gap: 2px; /* Menos espacio entre icono y texto */
+    font-size: 0.55rem; /* Texto pequeño */
+    font-weight: 500; 
+    gap: 2px; 
     height: 100%; 
+    padding-bottom: 0;
 }
-
-.mobile-nav-btn i { 
-    /* Icono más pequeño */
-    font-size: 1.1rem; 
-    margin-bottom: 0; 
-    margin-top: 2px;
-}
-
+.mobile-nav-btn i { font-size: 1.2rem; margin-bottom: 0; }
 .mobile-nav-btn.active { color: white; }
-.mobile-nav-btn.active i { color: var(--brand-red); }
+.mobile-nav-btn.active i { color: var(--brand-red); margin-top: -2px; /* Efecto subida sutil */ }
 
 /* COMPONENTES */
 .btn-primary { background: var(--brand-red-gradient); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; text-align: center;}
 .btn-primary.sm { padding: 8px 16px; font-size: 0.85rem; }
 .btn-danger { background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ff6b6b; padding: 8px 16px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+
 .glass-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 8px; width: 100%; font-size: 1rem; }
 .glass-input.sm { padding: 8px; width: auto; font-size: 0.9rem; }
+
+/* --- FIX DESPLEGABLES (SELECTS) VISIBLES --- */
+select.glass-input {
+    background-color: rgba(211, 47, 47, 0.15); /* Rojo suave para destacar */
+    border: 1px solid rgba(211, 47, 47, 0.4);
+    color: white;
+    cursor: pointer;
+}
+/* Asegura que las opciones se lean en negro en PC/Mac */
+select.glass-input option {
+    background-color: #111;
+    color: white;
+}
+
 .search-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 0 10px; height: 38px; }
 .search-box input { background: transparent; border: none; color: white; width: 120px; font-size: 0.9rem; outline: none; }
 .search-box i { color: #888; font-size: 0.9rem; margin-right: 5px; }
@@ -129,17 +147,19 @@ html, body {
 .dynamic-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
 .btn-mini-del { background: rgba(255,0,0,0.2); border: 1px solid rgba(255,0,0,0.3); color: #ff9999; border-radius: 6px; width: 35px; height: 35px; display:flex; align-items:center; justify-content:center; cursor: pointer; }
 
-/* MODALS */
+/* MODALS FULL SCREEN (SCROLL FIX) */
 .full-screen-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; flex-direction: column; padding-top: env(safe-area-inset-top); }
 .fs-header { position: absolute; top: env(safe-area-inset-top); left: 0; width: 100%; height: 60px; background: rgba(20,20,20,0.98); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 2; }
 .fs-body { position: absolute; top: calc(60px + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0; overflow-y: scroll; -webkit-overflow-scrolling: touch; padding: 20px; padding-bottom: 200px; }
 .fs-close-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; display:flex; align-items:center; gap:5px; font-weight: 600;}
+
+/* MODALS POPUP */
 .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); padding-top: env(safe-area-inset-top); }
 .modal-content { background: #151515; margin: 5% auto; padding: 25px; width: 95%; border-radius: 20px; border: 1px solid #333; max-height: 85vh; overflow-y: auto; position: relative; }
 .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border-radius: 50%; width: 30px; height: 30px; border: none; color: #fff; cursor: pointer; display:flex; align-items:center; justify-content:center;}
 #clientSelectorModal { z-index: 6000; }
 
-/* DIET DETAILS & GUIDES (ESTILOS RECUPERADOS) */
+/* DIET DETAILS & GUIDES */
 .diet-hero { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-bottom: 30px; }
 .meal-section { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 15px; }
 .meal-title { color: var(--brand-red); margin-bottom: 15px; font-weight: 800; text-transform: uppercase; display:flex; justify-content:space-between; align-items: center; font-size: 0.95rem; }
@@ -166,7 +186,4 @@ html, body {
     .mobile-bottom-nav { display: flex; }
     .app-header { padding-left: 15px; padding-right: 15px; }
     .diet-hero, .guide-grid { grid-template-columns: 1fr; }
-
 }
-
-
