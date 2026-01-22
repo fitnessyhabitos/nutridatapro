@@ -17,7 +17,7 @@ body {
     background: var(--bg-dark); color: var(--text-main);
     position: fixed; width: 100%; height: 100%; height: 100dvh;
     overflow: hidden;
-    overscroll-behavior: none;
+    overscroll-behavior: none; /* Clave para evitar rebote total */
     background-color: #000; 
 }
 
@@ -60,21 +60,32 @@ body {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     overflow-y: auto; -webkit-overflow-scrolling: touch;
     padding-top: calc(85px + env(safe-area-inset-top)); 
-    padding-bottom: 120px;
+    padding-bottom: 100px; /* Reducido ligeramente al ser la barra más fina */
     padding-left: 15px; padding-right: 15px;
     max-width: 1200px; margin: 0 auto;
 }
 
-/* MOBILE NAV */
+/* MOBILE NAV (MÁS FINA Y FIJA) */
 .mobile-bottom-nav {
-    display: none; position: fixed; bottom: 0; left: 0; width: 100%; 
-    background: rgba(10, 10, 10, 0.99); border-top: 1px solid rgba(255,255,255,0.15); z-index: 9999; 
+    display: none; 
+    position: fixed; bottom: 0; left: 0; width: 100%; 
+    background: rgba(10, 10, 10, 0.99); 
+    border-top: 1px solid rgba(255,255,255,0.15); 
+    z-index: 10000; /* Z-Index muy alto */
+    
     justify-content: space-around; align-items: center;
-    padding-bottom: env(safe-area-inset-bottom); padding-top: 8px; height: calc(55px + env(safe-area-inset-bottom));
-    touch-action: none; /* Bloquea gestos en la barra */
+    
+    /* Ajuste Fino */
+    padding-top: 5px; 
+    padding-bottom: env(safe-area-inset-bottom); 
+    height: calc(45px + env(safe-area-inset-bottom)); /* Altura reducida a 45px base */
+    
+    /* Bloqueo total de interacción de arrastre */
+    touch-action: none; 
+    overscroll-behavior: none;
 }
-.mobile-nav-btn { background: none; border: none; color: #666; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: 0.65rem; gap: 4px; font-weight: 600; height: 100%;}
-.mobile-nav-btn i { font-size: 1.3rem; }
+.mobile-nav-btn { background: none; border: none; color: #666; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: 0.6rem; gap: 3px; font-weight: 600; height: 100%; padding-top: 5px; }
+.mobile-nav-btn i { font-size: 1.2rem; }
 .mobile-nav-btn.active { color: white; }
 .mobile-nav-btn.active i { color: var(--brand-red); }
 
@@ -95,19 +106,16 @@ body {
 .card { background: rgba(30,30,30,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; position: relative; }
 .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 
-/* --- FIX SCROLL MODAL (ESTRATEGIA ABSOLUTA) --- */
+/* MODAL FULL SCREEN (CON SCROLL INTERNO) */
 .full-screen-modal {
     display: none;
-    /* Posición fija ocupando todo */
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; height: 100dvh;
-    background: #000; z-index: 99999; /* Máxima prioridad */
-    
-    /* Padding para respetar el notch */
+    background: #000; z-index: 99999; 
+    flex-direction: column; 
     padding-top: env(safe-area-inset-top); 
 }
 
 .fs-header {
-    /* Cabecera fija dentro del modal */
     position: absolute; top: env(safe-area-inset-top); left: 0; width: 100%;
     height: 60px;
     background: rgba(20,20,20,0.98); border-bottom: 1px solid #333;
@@ -116,16 +124,13 @@ body {
 }
 
 .fs-body {
-    /* Cuerpo con scroll absoluto */
     position: absolute;
-    top: calc(60px + env(safe-area-inset-top)); /* Empieza debajo del header */
-    left: 0; right: 0; bottom: 0; /* Hasta el final */
-    
-    overflow-y: scroll; /* Scroll activo */
-    -webkit-overflow-scrolling: touch; /* Rebote nativo iOS */
-    
+    top: calc(60px + env(safe-area-inset-top)); 
+    left: 0; right: 0; bottom: 0; 
+    overflow-y: scroll; /* Forzar scroll */
+    -webkit-overflow-scrolling: touch; 
     padding: 20px;
-    padding-bottom: 150px; /* Espacio extra final seguro */
+    padding-bottom: 150px; 
 }
 
 .fs-close-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; display:flex; align-items:center; gap:5px; font-weight: 600;}
