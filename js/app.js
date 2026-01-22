@@ -167,6 +167,10 @@ window.previewDietVisual = (diet) => {
         ${mealsHtml}
         <h3 style="margin-top:40px; margin-bottom:20px; border-top:1px solid #333; padding-top:20px; color:white;">Guía & Reglas</h3>
         <div class="warning-box"><strong>⚠️ REGLAS:</strong><ul style="padding-left:20px; margin-top:10px; color:#ffcc80;">${guide.tips.map(t=>`<li>${t}</li>`).join('')}<li>Pesar todo en CRUDO.</li></ul></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:15px; margin-top:20px;">
+            <div class="card" style="background:rgba(76, 175, 80, 0.1); border-color:rgba(76, 175, 80, 0.3);"><h4 style="color:#66bb6a; margin:0 0 10px 0;">PRIORIZAR</h4><ul style="padding-left:20px; color:#ddd; font-size:0.9rem;">${guide.allowed.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+            <div class="card" style="background:rgba(244, 67, 54, 0.1); border-color:rgba(244, 67, 54, 0.3);"><h4 style="color:#ef5350; margin:0 0 10px 0;">EVITAR</h4><ul style="padding-left:20px; color:#ddd; font-size:0.9rem;">${guide.forbidden.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+        </div>
         ${adminBtn}
     `;
     setTimeout(() => {
@@ -183,7 +187,7 @@ window.assignDietFromModal = async (cid, name) => { if(!dietToAssign || !confirm
 window.resetDatabaseManual = async () => { if(!isAdmin) return alert("Solo admin"); if(!confirm("⚠️ Resetear DB?")) return; try { const q=await getDocs(collection(db,"diet_templates")); const p=[]; q.forEach(d=>p.push(deleteDoc(doc(db,"diet_templates",d.id)))); await Promise.all(p); const bs=50; for(let i=0; i<dietsDatabase.length; i+=bs){const ch=dietsDatabase.slice(i,i+bs); await Promise.all(ch.map(d=>addDoc(collection(db,"diet_templates"),d)));} alert("Hecho"); loadDietsAdmin(); } catch(e) { alert(e.message); } };
 window.filterDiets = () => { const t=document.getElementById('searchKcal').value.toLowerCase(); const c=document.getElementById('filterCategory').value; if(!window.allDietsCache)return; renderDietsListAdmin(window.allDietsCache.filter(d=>(d.name.toLowerCase().includes(t)||d.calories.toString().includes(t))&&(c==='all'||d.category===c))); };
 window.sendAthleteNote = async()=>{const t=document.getElementById('athleteNoteInput').value; await addDoc(collection(db,"notas"),{uid:currentUser.uid,author:userData.alias,text:t,date:new Date().toLocaleString(),read:false}); document.getElementById('athleteNoteInput').value=""; alert("Enviada");};
-window.handleAddClient = async(e)=>{e.preventDefault(); const n=document.getElementById('clientName').value; const a=document.getElementById('clientAlias').value; const em=document.getElementById('clientEmail').value; const g=document.getElementById('clientGoal').value; await addDoc(collection(db,"clientes"),{name:n,alias:a,email:em,goal:g,currentDietName:null,dietHistory:[]}); alert("Cliente creado (sin auth)"); window.closeModal('clientModal'); renderClientsAdmin(); };
+window.handleAddClient = async(e)=>{e.preventDefault(); const n=document.getElementById('clientName').value; const a=document.getElementById('clientAlias').value; const em=document.getElementById('clientEmail').value; const g=document.getElementById('clientGoal').value; await addDoc(collection(db,"clientes"),{name:n,alias:a,email:em,goal:g,currentDietName:null,dietHistory:[]}); alert("Cliente creado"); window.closeModal('clientModal'); renderClientsAdmin(); };
 window.handleCheckin = async(e)=>{e.preventDefault(); const w=document.getElementById('checkinWeight').value; const d=document.getElementById('checkinDate').value; await addDoc(collection(db,"checkins"),{uid:currentUser.uid,date:d,weight:w}); window.closeModal('checkinModal'); loadEvolutionData(); };
 
 // Render Helpers
