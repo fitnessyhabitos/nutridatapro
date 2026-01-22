@@ -73,7 +73,7 @@ html, body {
     max-width: 1200px; margin: 0 auto;
 }
 
-/* --- MOBILE NAV (ULTRA COMPACTA & ICONOS GRANDES) --- */
+/* --- MOBILE NAV (AJUSTE FINAL DE POSICIÓN) --- */
 .mobile-bottom-nav {
     display: none; 
     position: fixed; bottom: 0; left: 0; width: 100%; 
@@ -83,11 +83,10 @@ html, body {
     
     display: flex; justify-content: space-around; align-items: flex-end;
     
-    /* Padding inferior reducido a 8px */
     padding-bottom: 8px; 
-    padding-top: 0; 
+    /* AJUSTE CLAVE: Añadimos un poco de techo para empujar los iconos abajo */
+    padding-top: 6px; 
     
-    /* Altura total reducida a 50px */
     height: 50px; 
 
     touch-action: none; overscroll-behavior: none;
@@ -98,7 +97,6 @@ html, body {
     background: none; border: none; color: #777; flex: 1; 
     display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
     
-    /* Texto un poco más grande */
     font-size: 0.65rem; 
     font-weight: 500; 
     gap: 2px; 
@@ -106,7 +104,6 @@ html, body {
     padding-bottom: 2px;
 }
 .mobile-nav-btn i { 
-    /* Icono más grande para rellenar */
     font-size: 1.4rem; 
     margin-bottom: 0; 
 }
