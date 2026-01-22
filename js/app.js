@@ -22,93 +22,89 @@ let isAdmin = false;
 let dietToAssign = null;
 const ADMIN_EMAIL = "toni@nutridatapro.es"; 
 
-// --- 1. INICIALIZACIÓN SEGURA ---
+// --- 1. EVENTOS DE INICIALIZACIÓN ---
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM Cargado. Inicializando eventos...");
+
+    // TOGGLE LOGIN / REGISTER
+    const btnReg = document.getElementById('btnToggleRegister');
+    const btnLog = document.getElementById('btnToggleLogin');
     
-    // --- FIX REGISTRO: Solo alternar formularios, no ocultar la tarjeta ---
-    const btnToRegister = document.getElementById('btnToggleRegister');
-    const btnToLogin = document.getElementById('btnToggleLogin');
+    if(btnReg) btnReg.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+        btnReg.parentElement.style.display = 'none'; // Ocultar prompt de registro
+    });
 
-    if(btnToRegister) {
-        btnToRegister.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Ocultamos Login, Mostramos Registro
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
-            // Ocultamos el enlace de "ir a registro"
-            btnToRegister.parentElement.style.display = 'none';
-        });
-    }
+    if(btnLog) btnLog.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
+        if(btnReg) btnReg.parentElement.style.display = 'block'; // Mostrar prompt
+    });
 
-    if(btnToLogin) {
-        btnToLogin.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Ocultamos Registro, Mostramos Login
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
-            // Volvemos a mostrar el enlace de "ir a registro"
-            if(btnToRegister) btnToRegister.parentElement.style.display = 'block';
-        });
-    }
-
-    // Login Submit
+    // SUBMIT LOGIN
     const loginForm = document.getElementById('loginForm');
-    if(loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPass').value;
-            try { await signInWithEmailAndPassword(auth, email, pass); } 
-            catch(error) { alert("Error: " + error.message); }
-        });
-    }
+    if(loginForm) loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // IMPORTANTE: Evita recarga
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPass').value;
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+        } catch(err) {
+            alert("Error login: " + err.message);
+        }
+    });
 
-    // Register Submit
+    // SUBMIT REGISTER
     const registerForm = document.getElementById('registerForm');
-    if(registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('regName').value;
-            const alias = document.getElementById('regAlias').value;
-            const email = document.getElementById('regEmail').value;
-            const pass = document.getElementById('regPass').value;
-            try {
-                const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "clientes", cred.user.uid), {
-                    name: name, alias: alias, email: email, goal: "General", currentDietName: null, dietHistory: []
-                });
-                alert("Cuenta creada.");
-            } catch(error) { alert("Error: " + error.message); }
-        });
-    }
+    if(registerForm) registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // IMPORTANTE
+        const name = document.getElementById('regName').value;
+        const alias = document.getElementById('regAlias').value;
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+        try {
+            const c = await createUserWithEmailAndPassword(auth, email, pass);
+            await setDoc(doc(db, "clientes", c.user.uid), {
+                name: name, alias: alias, email: email, goal: "General", currentDietName: null, dietHistory: []
+            });
+            alert("Cuenta creada.");
+        } catch(err) {
+            alert("Error registro: " + err.message);
+        }
+    });
 
-    // Listeners Botones
-    const btnLogout = document.getElementById('btnLogout');
-    if(btnLogout) btnLogout.addEventListener('click', () => signOut(auth));
-
-    // Admin
-    if(document.getElementById('btnOpenClientModal')) document.getElementById('btnOpenClientModal').addEventListener('click', () => openModal('clientModal'));
-    if(document.getElementById('btnResetDB')) document.getElementById('btnResetDB').addEventListener('click', resetDatabaseManual);
-    if(document.getElementById('btnOpenManualModal')) document.getElementById('btnOpenManualModal').addEventListener('click', () => openModal('manualDietModal'));
+    // BOTONES APP (Admin/User)
+    const assignClick = (id, func) => { const el = document.getElementById(id); if(el) el.addEventListener('click', func); };
     
-    // Filtros
-    if(document.getElementById('searchKcal')) document.getElementById('searchKcal').addEventListener('input', filterDiets);
-    if(document.getElementById('filterCategory')) document.getElementById('filterCategory').addEventListener('change', filterDiets);
+    assignClick('btnLogout', () => signOut(auth));
+    assignClick('btnOpenClientModal', () => openModal('clientModal'));
+    assignClick('btnResetDB', resetDatabaseManual);
+    assignClick('btnOpenManualModal', () => openModal('manualDietModal'));
+    assignClick('btnOpenCheckinModal', () => openModal('checkinModal'));
+    assignClick('btnSendNote', sendAthleteNote);
 
-    // Atleta
-    if(document.getElementById('btnOpenCheckinModal')) document.getElementById('btnOpenCheckinModal').addEventListener('click', () => openModal('checkinModal'));
-    if(document.getElementById('btnSendNote')) document.getElementById('btnSendNote').addEventListener('click', sendAthleteNote);
+    // Filtros
+    const search = document.getElementById('searchKcal');
+    if(search) search.addEventListener('input', filterDiets);
+    const cat = document.getElementById('filterCategory');
+    if(cat) cat.addEventListener('change', filterDiets);
 
     // Cerrar Modales
-    ['btnCloseDietModal','btnCloseSelectorModal','btnCloseClientModal','btnCloseCheckinModal','btnCloseManualModal'].forEach(id => {
+    ['btnCloseDietModal', 'btnCloseSelectorModal', 'btnCloseClientModal', 'btnCloseCheckinModal', 'btnCloseManualModal'].forEach(id => {
         const btn = document.getElementById(id);
         if(btn) btn.addEventListener('click', () => {
-            const modalId = id.replace('btnClose', '').replace('Modal', '') + 'Modal'; // Truco para sacar el ID del modal: btnCloseClientModal -> clientModal
-            // Ajuste manual por si acaso el truco falla en alguno específico
             if(id === 'btnCloseDietModal') closeModal('dietViewModal');
             else if(id === 'btnCloseSelectorModal') closeModal('clientSelectorModal');
             else if(id === 'btnCloseManualModal') closeModal('manualDietModal');
-            else closeModal(id.replace('btnClose','').toLowerCase().replace('modal','') + 'Modal'); 
+            else {
+                const mid = id.replace('btnClose', '').toLowerCase().replace('modal','') + 'Modal'; 
+                // fix simple names: clientModal, checkinModal
+                if(id==='btnCloseClientModal') closeModal('clientModal');
+                else if(id==='btnCloseCheckinModal') closeModal('checkinModal');
+            }
         });
     });
 });
@@ -120,6 +116,7 @@ onAuthStateChanged(auth, async (user) => {
         isAdmin = (user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim());
         document.getElementById('landingSection').style.display = 'none';
         document.getElementById('appLayout').style.display = 'block';
+        
         if (isAdmin) initAdminDashboard();
         else {
             const snap = await getDoc(doc(db,"clientes",user.uid));
@@ -134,41 +131,38 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // --- FUNCIONES CORE ---
-function openModal(id){ document.getElementById(id).style.display='block'; }
-function closeModal(id){ document.getElementById(id).style.display='none'; }
+function openModal(id){ const m = document.getElementById(id); if(m) m.style.display='block'; }
+function closeModal(id){ const m = document.getElementById(id); if(m) m.style.display='none'; }
 
 function renderMenus(items) {
-    const d = document.getElementById('desktopMenu'); 
-    const m = document.getElementById('mobileMenu');
-    if(d) d.innerHTML = ''; 
-    if(m) m.innerHTML = '';
+    const d = document.getElementById('desktopMenu'); const m = document.getElementById('mobileMenu');
+    if(d) d.innerHTML = ''; if(m) m.innerHTML = '';
+    
     items.forEach(i => {
-        if(d) d.innerHTML += `<button class="nav-link" id="desk-btn-${i.id}"><i class="bi ${i.icon}"></i> ${i.label}</button>`;
-        if(m) m.innerHTML += `<button class="mobile-nav-btn" id="mob-btn-${i.id}"><i class="bi ${i.icon}"></i><span>${i.label}</span></button>`;
-    });
-    items.forEach(i => {
-        const bD = document.getElementById(`desk-btn-${i.id}`);
-        const bM = document.getElementById(`mob-btn-${i.id}`);
-        if(bD) bD.addEventListener('click', () => navigate(i.id));
-        if(bM) bM.addEventListener('click', () => navigate(i.id));
+        if(d) {
+            const btn = document.createElement('button'); btn.className='nav-link'; btn.id=`desk-btn-${i.id}`;
+            btn.innerHTML=`<i class="bi ${i.icon}"></i> ${i.label}`; btn.onclick=()=>navigate(i.id);
+            d.appendChild(btn);
+        }
+        if(m) {
+            const btn = document.createElement('button'); btn.className='mobile-nav-btn'; btn.id=`mob-btn-${i.id}`;
+            btn.innerHTML=`<i class="bi ${i.icon}"></i><span>${i.label}</span>`; btn.onclick=()=>navigate(i.id);
+            m.appendChild(btn);
+        }
     });
     navigate(items[0].id);
 }
 
-window.navigate = (sid) => {
-    document.getElementById('adminView').style.display = 'none'; 
-    document.getElementById('athleteView').style.display = 'none';
+function navigate(sid) {
+    document.getElementById('adminView').style.display='none'; document.getElementById('athleteView').style.display='none';
     const view = isAdmin ? 'adminView' : 'athleteView';
-    document.getElementById(view).style.display = 'block';
+    document.getElementById(view).style.display='block';
+    const s = isAdmin ? ['clients','diets','inbox'] : ['myPlan','evolution','education','history','notes'];
+    s.forEach(x => { const el = document.getElementById(x+'-section'); if(el) el.style.display = (x===sid) ? 'block' : 'none'; });
     
-    const sections = ['clients','diets','inbox', 'myPlan','evolution','education','history','notes'];
-    sections.forEach(x => { const el = document.getElementById(x+'-section'); if(el) el.style.display = (x===sid) ? 'block' : 'none'; });
-
     document.querySelectorAll('.nav-link, .mobile-nav-btn').forEach(b => b.classList.remove('active'));
-    const activeD = document.getElementById(`desk-btn-${sid}`);
-    const activeM = document.getElementById(`mob-btn-${sid}`);
-    if(activeD) activeD.classList.add('active');
-    if(activeM) activeM.classList.add('active');
+    const ad = document.getElementById(`desk-btn-${sid}`); if(ad) ad.classList.add('active');
+    const am = document.getElementById(`mob-btn-${sid}`); if(am) am.classList.add('active');
     
     if(sid==='clients') renderClientsAdmin();
     if(sid==='diets') loadDietsAdmin();
@@ -176,15 +170,14 @@ window.navigate = (sid) => {
     if(sid==='myPlan' && !isAdmin) renderMyPlan();
     if(sid==='evolution' && !isAdmin) loadEvolutionData();
     if(sid==='education' && !isAdmin) renderEducation();
-};
+}
 
 function initAdminDashboard() { renderMenus([{id:'clients', label:'Atletas', icon:'bi-people-fill'},{id:'diets', label:'Biblioteca', icon:'bi-collection-fill'},{id:'inbox', label:'Mensajes', icon:'bi-chat-left-text-fill'}]); }
 function initAthleteDashboard() { document.getElementById('athleteGreeting').innerText = `Hola, ${userData.alias}`; renderMenus([{id:'myPlan', label:'Plan', icon:'bi-calendar-check-fill'},{id:'evolution', label:'Progreso', icon:'bi-graph-up-arrow'},{id:'education', label:'Guía', icon:'bi-book-half'},{id:'history', label:'Historial', icon:'bi-clock-history'},{id:'notes', label:'Notas', icon:'bi-pencil-square'}]); }
 
 // --- VISUALIZADOR ---
 window.previewDietVisual = (diet) => {
-    const modal = document.getElementById('dietViewModal');
-    if(modal) modal.style.display = 'flex'; 
+    openModal('dietViewModal');
     const container = document.getElementById('diet-detail-content');
     const chartId = `chart-${Math.random().toString(36).substr(2,9)}`;
     const guide = dietGuides[diet.category] || dietGuides["Volumen"];
@@ -208,8 +201,9 @@ window.previewDietVisual = (diet) => {
     if(diet.plan.snack && diet.plan.snack.length > 0) mealsHtml += `<div class="meal-section">${header('bi-apple','SNACK',sn)}${renderOptions(diet.plan.snack)}</div>`;
     if(diet.plan.dinner) mealsHtml += `<div class="meal-section">${header('bi-moon-stars-fill','CENA',dn)}${renderOptions(diet.plan.dinner)}</div>`;
 
-    const dietJson = JSON.stringify(diet).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-    const adminBtn = isAdmin ? `<div style="margin-top:30px; border-top:1px solid #333; padding-top:20px;"><button class="btn-primary" onclick='window.openClientSelector(${dietJson})'>📲 ASIGNAR A ATLETA</button></div>` : '';
+    // Pasamos el objeto escapado
+    const dietStr = encodeURIComponent(JSON.stringify(diet));
+    const adminBtn = isAdmin ? `<div style="margin-top:30px; border-top:1px solid #333; padding-top:20px;"><button class="btn-primary" onclick="window.prepareAssign('${dietStr}')">📲 ASIGNAR A ATLETA</button></div>` : '';
 
     container.innerHTML = `
         <div class="diet-hero">
@@ -229,10 +223,6 @@ window.previewDietVisual = (diet) => {
         ${mealsHtml}
         <h3 style="margin-top:40px; margin-bottom:20px; border-top:1px solid #333; padding-top:20px; color:white;">Guía & Reglas</h3>
         <div class="warning-box"><strong>⚠️ REGLAS:</strong><ul style="padding-left:20px; margin-top:10px; color:#ffcc80;">${guide.tips.map(t=>`<li>${t}</li>`).join('')}<li>Pesar todo en CRUDO.</li></ul></div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:15px; margin-top:20px;">
-            <div class="card" style="background:rgba(76, 175, 80, 0.1); border-color:rgba(76, 175, 80, 0.3);"><h4 style="color:#66bb6a; margin:0 0 10px 0;">PRIORIZAR</h4><ul style="padding-left:20px; color:#ddd; font-size:0.9rem;">${guide.allowed.map(i=>`<li>${i}</li>`).join('')}</ul></div>
-            <div class="card" style="background:rgba(244, 67, 54, 0.1); border-color:rgba(244, 67, 54, 0.3);"><h4 style="color:#ef5350; margin:0 0 10px 0;">EVITAR</h4><ul style="padding-left:20px; color:#ddd; font-size:0.9rem;">${guide.forbidden.map(i=>`<li>${i}</li>`).join('')}</ul></div>
-        </div>
         ${adminBtn}
     `;
     setTimeout(() => {
@@ -241,16 +231,36 @@ window.previewDietVisual = (diet) => {
     }, 250);
 }
 
-// RESTO
+// BRIDGE FUNCTION (Para que el onclick del HTML generado funcione)
+window.prepareAssign = (dietEncoded) => {
+    dietToAssign = JSON.parse(decodeURIComponent(dietEncoded));
+    openClientSelector();
+}
+
 window.createManualDiet = async (e) => { e.preventDefault(); const getOpt = (p) => { const o = []; const a=document.getElementById(p+'_A').value; const b=document.getElementById(p+'_B').value; const c=document.getElementById(p+'_C').value; if(a)o.push({title:"A",desc:a}); if(b)o.push({title:"B",desc:b}); if(c)o.push({title:"C",desc:c}); return o.length?o:[{title:"Única",desc:"Según macros."}]; }; const manualDiet = { name: document.getElementById('mdName').value, category: document.getElementById('mdCat').value, calories: document.getElementById('mdKcal').value, mealsPerDay: 3, isAdLibitum: false, description: "Plan manual.", macros: {p:30,c:40,f:30}, plan: { breakfast: getOpt('mdBk'), lunch: getOpt('mdLn'), dinner: getOpt('mdDn'), snack: [] } }; try { await addDoc(collection(db, "diet_templates"), manualDiet); closeModal('manualDietModal'); alert("Guardada."); loadDietsAdmin(); } catch (e) { alert(e.message); } };
-window.openClientSelector = async (diet) => { dietToAssign = diet; const list = document.getElementById('clientSelectorList'); list.innerHTML = '<div class="loading-spinner">Cargando...</div>'; openModal('clientSelectorModal'); const q = await getDocs(collection(db, "clientes")); list.innerHTML = ''; if(q.empty) { list.innerHTML = '<p>No hay atletas.</p>'; return; } q.forEach(docSnap => { const c = docSnap.data(); const card = document.createElement('div'); card.className = 'card'; card.style.marginBottom='10px'; card.style.cursor='pointer'; card.style.borderLeft='4px solid #333'; card.addEventListener('click', () => window.assignDietFromModal(docSnap.id, c.alias)); card.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><div><h4 style="margin:0; color:white;">${c.alias}</h4><small style="color:#888;">${c.name}</small></div><div style="text-align:right;"><span class="status-badge" style="background:#222;">${c.goal}</span><br><small style="color:var(--brand-red);">${c.currentDietName ? 'Tiene Plan' : 'Sin Plan'}</small></div></div>`; list.appendChild(card); }); };
-window.assignDietFromModal = async (clientId, clientName) => { if(!dietToAssign || !confirm(`¿Asignar "${dietToAssign.name}" a ${clientName}?`)) return; const clientRef = doc(db, "clientes", clientId); const h = (await getDoc(clientRef)).data().dietHistory || []; h.unshift({ name: dietToAssign.name, date: new Date().toLocaleDateString(), category: dietToAssign.category }); await updateDoc(clientRef, { currentDietName: dietToAssign.name, currentDietData: dietToAssign, dietHistory: h }); alert(`✅ Asignado a ${clientName}`); closeModal('clientSelectorModal'); closeModal('dietViewModal'); };
-window.resetDatabaseManual = async () => { if(!isAdmin) return alert("Solo admin"); if(!confirm("⚠️ Resetear DB?")) return; try { const q=await getDocs(collection(db,"diet_templates")); const p=[]; q.forEach(d=>p.push(deleteDoc(doc(db,"diet_templates",d.id)))); await Promise.all(p); const bs=50; for(let i=0; i<dietsDatabase.length; i+=bs){const ch=dietsDatabase.slice(i,i+bs); await Promise.all(ch.map(d=>addDoc(collection(db,"diet_templates"),d)));} alert("Hecho"); loadDietsAdmin(); } catch(e) { alert(e.message); } };
+
+async function openClientSelector() { 
+    const list = document.getElementById('clientSelectorList'); list.innerHTML = '<div class="loading-spinner">Cargando...</div>'; openModal('clientSelectorModal'); const q = await getDocs(collection(db, "clientes")); list.innerHTML = ''; if(q.empty) { list.innerHTML = '<p>No hay atletas.</p>'; return; } 
+    q.forEach(docSnap => { 
+        const c = docSnap.data(); const card = document.createElement('div'); card.className = 'card'; card.style.marginBottom='10px'; card.style.cursor='pointer'; card.style.borderLeft='4px solid #333'; 
+        card.addEventListener('click', () => assignDietFromModal(docSnap.id, c.alias));
+        card.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><div><h4 style="margin:0; color:white;">${c.alias}</h4><small style="color:#888;">${c.name}</small></div><div style="text-align:right;"><span class="status-badge" style="background:#222;">${c.goal}</span><br><small style="color:var(--brand-red);">${c.currentDietName ? 'Tiene Plan' : 'Sin Plan'}</small></div></div>`; list.appendChild(card); 
+    }); 
+};
+
+async function assignDietFromModal(clientId, clientName) { 
+    if(!dietToAssign || !confirm(`¿Asignar "${dietToAssign.name}" a ${clientName}?`)) return; 
+    const clientRef = doc(db, "clientes", clientId); const h = (await getDoc(clientRef)).data().dietHistory || []; 
+    h.unshift({ name: dietToAssign.name, date: new Date().toLocaleDateString(), category: dietToAssign.category }); 
+    await updateDoc(clientRef, { currentDietName: dietToAssign.name, currentDietData: dietToAssign, dietHistory: h }); 
+    alert(`✅ Asignado a ${clientName}`); closeModal('clientSelectorModal'); closeModal('dietViewModal'); 
+};
+
+async function resetDatabaseManual() { if(!isAdmin) return alert("Solo admin"); if(!confirm("⚠️ Resetear DB?")) return; try { const q=await getDocs(collection(db,"diet_templates")); const p=[]; q.forEach(d=>p.push(deleteDoc(doc(db,"diet_templates",d.id)))); await Promise.all(p); const bs=50; for(let i=0; i<dietsDatabase.length; i+=bs){const ch=dietsDatabase.slice(i,i+bs); await Promise.all(ch.map(d=>addDoc(collection(db,"diet_templates"),d)));} alert("Hecho"); loadDietsAdmin(); } catch(e) { alert(e.message); } };
 async function loadDietsAdmin() { const g=document.getElementById('diets-grid'); g.innerHTML='Cargando...'; const q=await getDocs(collection(db,"diet_templates")); window.allDietsCache=[]; q.forEach(d=>window.allDietsCache.push({firestoreId:d.id,...d.data()})); renderDietsListAdmin(window.allDietsCache); }
 function renderDietsListAdmin(l) { const g=document.getElementById('diets-grid'); g.innerHTML=''; l.sort((a,b)=>(parseInt(a.calories)||9999)-(parseInt(b.calories)||9999)); l.forEach(d=>{ let c='#333'; if(d.category==='Déficit')c='#D32F2F'; if(d.category==='Volumen')c='#2E7D32'; if(d.category==='Salud')c='#F57C00'; if(d.category==='Senior')c='#0288D1'; const card = document.createElement('div'); card.className = 'card'; card.innerHTML = `<div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span class="status-badge" style="background:${c}">${d.category}</span><span class="status-badge" style="border:1px solid #555">${d.isAdLibitum?'SACIEDAD':d.calories+' kcal'}</span></div><h3>${d.name}</h3><p style="font-size:0.9rem; color:#aaa;">${d.description.substring(0,50)}...</p>`; const btn = document.createElement('button'); btn.className = 'btn-assign'; btn.innerHTML = '<i class="bi bi-eye"></i> Ver Plan'; btn.onclick = () => window.previewDietVisual(d); card.appendChild(btn); g.appendChild(card); }); }
 function filterDiets() { const t=document.getElementById('searchKcal').value.toLowerCase(); const cat=document.getElementById('filterCategory').value; if(!window.allDietsCache)return; renderDietsListAdmin(window.allDietsCache.filter(d=>(d.name.toLowerCase().includes(t)||d.calories.toString().includes(t))&&(cat==='all'||d.category===cat))); }
-async function renderClientsAdmin(){ const g=document.getElementById('clients-grid'); g.innerHTML='Cargando...'; const q=await getDocs(collection(db,"clientes")); g.innerHTML=''; q.forEach(d=>{const c=d.data(); g.innerHTML+=`<div class="card"><h3>${c.alias}</h3><p>${c.name}</p><small style="color:#888">Plan: <span style="color:var(--brand-red)">${c.currentDietName||'Ninguno'}</span></small><button class="btn-assign" onclick="openDietAssignModal('${d.id}','${c.alias}')">Asignar</button></div>`;}); }
-window.openDietAssignModal=async(id,alias)=>{const n=prompt("Nombre exacto:"); if(n){const q=query(collection(db,"diet_templates"),where("name","==",n)); const s=await getDocs(q); if(!s.empty){const d=s.docs[0].data(); await updateDoc(doc(db,"clientes",id),{currentDietName:d.name,currentDietData:d, dietHistory:(await getDoc(doc(db,"clientes",id))).data().dietHistory||[]}); alert("Asignada"); renderClientsAdmin();}else alert("No encontrada");}};
+async function renderClientsAdmin(){ const g=document.getElementById('clients-grid'); g.innerHTML='Cargando...'; const q=await getDocs(collection(db,"clientes")); g.innerHTML=''; q.forEach(d=>{const c=d.data(); g.innerHTML+=`<div class="card"><h3>${c.alias}</h3><p>${c.name}</p><small style="color:#888">Plan: <span style="color:var(--brand-red)">${c.currentDietName||'Ninguno'}</span></small></div>`;}); }
 async function renderInbox() { const l=document.getElementById('inbox-list'); l.innerHTML='Cargando...'; const q=query(collection(db,"notas"),orderBy("date","desc")); const s=await getDocs(q); l.innerHTML=s.docs.map(d=>{const n=d.data(); return `<div class="card" style="margin-bottom:10px; border-left:4px solid ${n.read?'#333':'var(--brand-red)'}"><strong>${n.author}</strong><p>${n.text}</p>${!n.read?`<button class="btn-primary" onclick="window.markRead('${d.id}')" style="padding:5px; font-size:0.7rem">Leído</button>`:''}</div>`}).join(''); }
 window.markRead=async(id)=>{await updateDoc(doc(db,"notas",id),{read:true}); renderInbox();};
 function initAthleteDashboard(){document.getElementById('athleteNav').style.display='block'; document.getElementById('athleteGreeting').innerText=`Hola, ${userData.alias}`; showAthleteSection('myPlan');}
