@@ -70,16 +70,47 @@ html, body {
     max-width: 1200px; margin: 0 auto;
 }
 
-/* MOBILE NAV */
+/* MOBILE NAV (SUPER FINA) */
 .mobile-bottom-nav {
-    display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid rgba(255,255,255,0.15); z-index: 9999; 
+    display: none; 
+    position: fixed; bottom: 0; left: 0; width: 100%; 
+    background: #000; 
+    border-top: 1px solid rgba(255,255,255,0.15); 
+    z-index: 10000; 
+    
     display: flex; justify-content: space-around; align-items: flex-start;
-    padding-bottom: env(safe-area-inset-bottom); padding-top: 12px;
-    height: auto; min-height: 60px; touch-action: none; overscroll-behavior: none;
+    
+    /* AJUSTES PARA HACERLA FINA: */
+    padding-bottom: env(safe-area-inset-bottom); /* Respeta el iPhone */
+    padding-top: 6px; /* Menos espacio arriba (Antes era 12px) */
+    
+    /* Altura base reducida a 42px (Antes era 60px) */
+    height: calc(42px + env(safe-area-inset-bottom)); 
+
+    touch-action: none; 
+    overscroll-behavior: none;
 }
+
 @media (min-width: 769px) { .mobile-bottom-nav { display: none !important; } }
-.mobile-nav-btn { background: none; border: none; color: #777; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; gap: 4px; font-weight: 500; height: 40px; }
-.mobile-nav-btn i { font-size: 1.3rem; margin-bottom: 0; }
+
+.mobile-nav-btn { 
+    background: none; border: none; color: #666; flex: 1; 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
+    
+    /* Texto más pequeño */
+    font-size: 0.55rem; 
+    font-weight: 600; 
+    gap: 2px; /* Menos espacio entre icono y texto */
+    height: 100%; 
+}
+
+.mobile-nav-btn i { 
+    /* Icono más pequeño */
+    font-size: 1.1rem; 
+    margin-bottom: 0; 
+    margin-top: 2px;
+}
+
 .mobile-nav-btn.active { color: white; }
 .mobile-nav-btn.active i { color: var(--brand-red); }
 
@@ -143,4 +174,5 @@ html, body {
     .mobile-bottom-nav { display: flex; }
     .app-header { padding-left: 15px; padding-right: 15px; }
     .diet-hero, .guide-grid { grid-template-columns: 1fr; }
+
 }
