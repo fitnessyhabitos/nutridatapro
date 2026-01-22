@@ -28,7 +28,7 @@
         <div class="login-card glass-panel">
             <img src="logo.png" alt="Logo" class="login-logo">
             <h1>NUTRI<span style="color:var(--brand-red)">DATA</span>PRO</h1>
-            <p style="color:#aaa; margin-bottom:30px;">Plataforma de Alto Rendimiento</p>
+            <p style="color:#aaa; margin-bottom:20px;">Plataforma de Alto Rendimiento</p>
             
             <div id="boxLogin">
                 <form onsubmit="handleLogin(event)">
@@ -48,6 +48,16 @@
                     <button type="submit" class="btn-primary full-width">CREAR CUENTA</button>
                 </form>
                 <p class="switch-auth"><a onclick="toggleAuth()">Volver a Login</a></p>
+            </div>
+
+            <div id="installInstructions" class="pwa-install-box">
+                <h4><i class="bi bi-phone"></i> Instalar App</h4>
+                <div class="pwa-steps">
+                    <i class="bi bi-apple"></i> <strong>iOS:</strong> Pulsa <i class="bi bi-box-arrow-up"></i> Compartir y selecciona <strong>"Añadir a pantalla de inicio"</strong>.
+                </div>
+                <div class="pwa-steps">
+                    <i class="bi bi-android"></i> <strong>Android:</strong> Pulsa <i class="bi bi-three-dots-vertical"></i> Menú y selecciona <strong>"Instalar aplicación"</strong>.
+                </div>
             </div>
         </div>
     </section>

@@ -167,10 +167,6 @@ window.previewDietVisual = (diet) => {
         ${mealsHtml}
         <h3 style="margin-top:40px; margin-bottom:20px; border-top:1px solid #333; padding-top:20px; color:white;">Guía & Reglas</h3>
         <div class="warning-box"><strong>⚠️ REGLAS:</strong><ul style="padding-left:20px; margin-top:10px; color:#ffcc80;">${guide.tips.map(t=>`<li>${t}</li>`).join('')}<li>Pesar todo en CRUDO.</li></ul></div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:15px; margin-top:20px;">
-            <div class="card" style="background:rgba(76, 175, 80, 0.1); border-color:rgba(76, 175, 80, 0.3);"><h4 style="color:#66bb6a; margin:0 0 10px 0;">PRIORIZAR</h4><ul style="padding-left:20px; color:#ddd; font-size:0.9rem;">${guide.allowed.map(i=>`<li>${i}</li>`).join('')}</ul></div>
-            <div class="card" style="background:rgba(244, 67, 54, 0.1); border-color:rgba(244, 67, 54, 0.3);"><h4 style="color:#ef5350; margin:0 0 10px 0;">EVITAR</h4><ul style="padding-left:20px; color:#ddd; font-size:0.9rem;">${guide.forbidden.map(i=>`<li>${i}</li>`).join('')}</ul></div>
-        </div>
         ${adminBtn}
     `;
     setTimeout(() => {
@@ -199,3 +195,9 @@ window.markRead=async(id)=>{await updateDoc(doc(db,"notas",id),{read:true}); ren
 function renderMyPlan(){const c=document.getElementById('myCurrentDietContainer'); if(!userData.currentDietData){c.innerHTML='<div class="warning-box">Sin plan.</div>';return;} window.previewDietVisual(userData.currentDietData);}
 function renderEducation(){ const c=document.getElementById('eduContent'); if(!userData.currentDietData){c.innerHTML='Sin plan';return;} const guide=dietGuides[userData.currentDietData.category]||dietGuides["Volumen"]; c.innerHTML=`<div class="warning-box"><h3>Tips ${userData.currentDietData.category}</h3><ul>${guide.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`; }
 async function loadEvolutionData() { const l = document.getElementById('weightHistoryList'); l.innerHTML="Cargando..."; const q=query(collection(db,"checkins"),where("uid","==",currentUser.uid),orderBy("date","asc")); const snap=await getDocs(q); const d=[], lbl=[]; let html=''; snap.forEach(doc=>{ const r=doc.data(); d.push(r.weight); lbl.push(r.date.substring(5)); html=`<div class="card" style="flex-direction:row;justify-content:space-between;padding:15px;margin-bottom:10px;"><span>${r.date}</span><strong>${r.weight}kg</strong></div>`+html; }); l.innerHTML=html||'<p>Sin registros.</p>'; if(window.evolutionChart)window.evolutionChart.destroy(); window.evolutionChart=new Chart(document.getElementById('weightChart'),{type:'line',data:{labels:lbl,datasets:[{label:'Peso',data:d,borderColor:'#D32F2F',tension:0.3,fill:true,backgroundColor:'rgba(211,47,47,0.1)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#333'}}}}}); }
+
+// DETECCIÓN PWA: OCULTAR INSTRUCCIONES
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    const instr = document.getElementById('installInstructions');
+    if(instr) instr.style.display = 'none';
+}
