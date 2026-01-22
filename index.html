@@ -108,7 +108,40 @@
     <div id="clientSelectorModal" class="modal"><div class="modal-content" style="max-width:500px; height:80vh;"><div class="modal-header-fixed"><h3>Asignar a...</h3><button class="close-btn" onclick="closeModal('clientSelectorModal')"><i class="bi bi-x"></i></button></div><div class="modal-body"><div id="clientSelectorList" class="list-container"></div></div></div></div>
     <div id="clientModal" class="modal"><div class="modal-content glass-panel" style="max-width:500px; margin:auto;"><span class="close" onclick="closeModal('clientModal')">&times;</span><h2>Nuevo Atleta</h2><form onsubmit="handleAddClient(event)"><label>Nombre</label><input type="text" id="clientName" class="glass-input" required><label>Alias</label><input type="text" id="clientAlias" class="glass-input" required><label>Email</label><input type="email" id="clientEmail" class="glass-input" required><label>Objetivo</label><select id="clientGoal" class="glass-input"><option value="Perdida Grasa">Definición</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option></select><button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar</button></form></div></div>
     <div id="checkinModal" class="modal"><div class="modal-content glass-panel" style="max-width:400px; margin:auto;"><span class="close" onclick="closeModal('checkinModal')">&times;</span><h2>Registrar Peso</h2><form onsubmit="handleCheckin(event)"><label>Fecha</label><input type="date" id="checkinDate" class="glass-input" required><label>Peso (kg)</label><input type="number" step="0.1" id="checkinWeight" class="glass-input" required><button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar</button></form></div></div>
-    <div id="manualDietModal" class="modal"><div class="modal-content glass-panel" style="max-width:700px; margin:auto; max-height:90vh;"><span class="close" onclick="closeModal('manualDietModal')">&times;</span><h2>Diseñador Manual</h2><form onsubmit="createManualDiet(event)"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;"><div><label>Nombre</label><input type="text" id="mdName" class="glass-input" required></div><div><label>Kcal</label><input type="number" id="mdKcal" class="glass-input" required></div></div><label>Categoría</label><select id="mdCat" class="glass-input" style="margin-bottom:25px;"><option value="Déficit">Déficit</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option><option value="Senior">Senior</option></select><h4 style="color:var(--brand-red); margin-top:10px;">Desayuno</h4><input type="text" id="mdBk_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdBk_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdBk_C" placeholder="Opción C" class="glass-input"><h4 style="color:var(--brand-red); margin-top:10px;">Comida</h4><input type="text" id="mdLn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdLn_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdLn_C" placeholder="Opción C" class="glass-input"><h4 style="color:var(--brand-red); margin-top:10px;">Cena</h4><input type="text" id="mdDn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdDn_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdDn_C" placeholder="Opción C" class="glass-input"><button type="submit" class="btn-primary" style="width:100%; margin-top:30px; padding:15px;">Guardar</button></form></div></div>
+    
+    <div id="manualDietModal" class="modal">
+        <div class="modal-content glass-panel" style="max-width:700px; margin:auto; max-height:90vh;">
+            <span class="close" onclick="closeModal('manualDietModal')">&times;</span>
+            <h2 style="color:white; margin-bottom:20px;">Diseñador Manual</h2>
+            <form onsubmit="createManualDiet(event)">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+                    <div><label>Nombre</label><input type="text" id="mdName" class="glass-input" required></div>
+                    <div><label>Kcal</label><input type="number" id="mdKcal" class="glass-input" required></div>
+                </div>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
+                    <div><label>Categoría</label><select id="mdCat" class="glass-input"><option value="Déficit">Déficit</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option><option value="Senior">Senior</option></select></div>
+                    <div><label>Ingestas</label><select id="mdMealsCount" class="glass-input" onchange="toggleSnackInput()"><option value="3">3 (Des-Com-Cen)</option><option value="4">4 (+ Merienda)</option></select></div>
+                </div>
+
+                <h4 style="color:var(--brand-red); margin-top:10px;">Desayuno</h4><input type="text" id="mdBk_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdBk_B" placeholder="Opción B" class="glass-input">
+                
+                <h4 style="color:var(--brand-red); margin-top:10px;">Comida</h4><input type="text" id="mdLn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdLn_B" placeholder="Opción B" class="glass-input">
+                
+                <div id="snackSection" style="display:none;">
+                    <h4 style="color:var(--brand-red); margin-top:10px;">Merienda</h4>
+                    <input type="text" id="mdSn_A" placeholder="Opción A" class="glass-input">
+                </div>
+
+                <h4 style="color:var(--brand-red); margin-top:10px;">Cena</h4><input type="text" id="mdDn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdDn_B" placeholder="Opción B" class="glass-input">
+                
+                <h4 style="color:#aaa; margin-top:15px; font-size:0.9rem;">Extras / Recena (Opcional)</h4>
+                <input type="text" id="mdExtras" placeholder="Ej: Fruta, Yogur, Suplementación..." class="glass-input" style="border-color:#444;">
+
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:30px; padding:15px;">Guardar</button>
+            </form>
+        </div>
+    </div>
 
     <script type="module" src="js/app.js"></script>
 </body>

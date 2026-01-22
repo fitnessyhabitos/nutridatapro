@@ -4,23 +4,22 @@
     --brand-red-gradient: linear-gradient(135deg, #D32F2F 0%, #9A0007 100%);
     --text-main: #ffffff;
     --text-muted: #a0a0a0;
-    --glass-bg: rgba(20, 20, 20, 0.98); /* Prácticamente opaco para evitar transparencias raras */
+    --glass-bg: rgba(20, 20, 20, 0.98);
     --glass-border: 1px solid rgba(255, 255, 255, 0.12);
     --radius-m: 12px;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-/* BLINDAJE CONTRA REBOTE IOS */
+/* BLINDAJE IOS */
 html, body {
     margin: 0; padding: 0;
-    width: 100%; height: 100%; height: 100dvh; /* Altura dinámica real */
-    overflow: hidden; /* Cortar todo lo que sobre */
-    overscroll-behavior: none; /* PROHIBIDO REBOTAR */
+    width: 100%; height: 100%; height: 100dvh;
+    overflow: hidden; 
+    overscroll-behavior: none;
     background-color: #000;
-    font-family: 'Inter', sans-serif;
-    color: var(--text-main);
-    position: fixed; /* Clavado a la pantalla */
+    font-family: 'Inter', sans-serif; color: var(--text-main);
+    position: fixed;
 }
 
 /* FONDO */
@@ -34,8 +33,7 @@ html, body {
     width: 100%; height: 100%; 
     display: flex; align-items: center; justify-content: center; 
     position: relative; z-index: 2000; 
-    overflow-y: auto; /* Permitir scroll si la pantalla es muy pequeña */
-    padding: 20px;
+    overflow-y: auto; padding: 20px;
 }
 .login-card { width: 100%; max-width: 400px; padding: 30px; text-align: center; border-radius: 24px; background: rgba(30, 30, 30, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); }
 .login-logo { width: 70px; height: 70px; margin-bottom: 15px; border-radius: 15px; }
@@ -47,13 +45,13 @@ html, body {
 .switch-auth { margin-top: 15px; font-size: 0.85rem; color: #888; }
 .switch-auth a { color: var(--brand-red); text-decoration: none; font-weight: bold; cursor:pointer;}
 
-/* INSTRUCCIONES PWA */
+/* INSTRUCCIONES PWA (Estilo Fijo) */
 .pwa-install-box {
-    margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);
     text-align: left; font-size: 0.85rem; color: #aaa;
 }
 .pwa-install-box h4 { margin: 0 0 10px 0; color: white; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
-.pwa-steps { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 5px; }
+.pwa-steps { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.05); }
 .pwa-steps strong { color: var(--brand-red); }
 
 /* APP HEADER */
@@ -62,7 +60,7 @@ html, body {
     position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(15, 15, 15, 0.98); 
     border-bottom: 1px solid rgba(255,255,255,0.1); 
     padding-top: calc(env(safe-area-inset-top) + 5px); padding-bottom: 10px;
-    touch-action: none; /* Header intocable para scroll */
+    touch-action: none; 
 }
 .logo-area { display: flex; align-items: center; gap: 10px; }
 .logo-area img { height: 28px; border-radius: 6px; }
@@ -74,47 +72,46 @@ html, body {
 /* MAIN CONTENT */
 .main-content {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    /* Padding inferior justo para librar la barra, sin excesos */
     padding-bottom: 100px; 
     padding-top: calc(85px + env(safe-area-inset-top)); 
     padding-left: 15px; padding-right: 15px;
-    
-    overflow-y: auto; /* Scroll interno */
-    -webkit-overflow-scrolling: touch; /* Suavidad nativa */
-    overscroll-behavior-y: contain; /* Evita propagar rebote al body */
-    
+    overflow-y: auto; -webkit-overflow-scrolling: touch; 
+    overscroll-behavior-y: contain; 
     max-width: 1200px; margin: 0 auto;
 }
 
-/* MOBILE NAV (FIX DEFINITIVO) */
+/* --- MOBILE NAV (FIX COMPACTO) --- */
 .mobile-bottom-nav {
     display: none; 
     position: fixed; bottom: 0; left: 0; width: 100%; 
-    background: #080808; /* Fondo sólido oscuro */
+    /* El color de fondo se aplica a todo el bloque, incluido el padding del safe area */
+    background: #111; 
     border-top: 1px solid rgba(255,255,255,0.15); 
     z-index: 9999; 
     
     display: flex; justify-content: space-around; align-items: center;
     
-    /* PEGADA ABAJO: Solo padding seguro */
+    /* El padding empuja los iconos hacia arriba para librar la barra blanca de iOS */
     padding-bottom: env(safe-area-inset-bottom);
-    padding-top: 8px;
-    /* Altura automática: Iconos + Texto + Safe Area */
+    padding-top: 5px; 
+    
+    /* La altura se adapta automáticamente al contenido + padding */
     height: auto; 
-    min-height: 60px; /* Base mínima */
+    min-height: calc(50px + env(safe-area-inset-bottom)); 
 
-    touch-action: none; /* Bloquea gestos */
+    touch-action: none; 
+    overscroll-behavior: none;
 }
-/* Ocultar en escritorio */
 @media (min-width: 769px) { .mobile-bottom-nav { display: none !important; } }
 
 .mobile-nav-btn { 
-    background: none; border: none; color: #666; flex: 1; 
+    background: none; border: none; color: #777; flex: 1; 
     display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    font-size: 0.6rem; gap: 4px; font-weight: 600; 
-    padding-bottom: 5px; /* Espacio visual */
+    font-size: 0.6rem; gap: 3px; font-weight: 500; 
+    padding-bottom: 2px; /* Ajuste fino */
+    height: 45px; /* Altura fija para el botón */
 }
-.mobile-nav-btn i { font-size: 1.25rem; }
+.mobile-nav-btn i { font-size: 1.2rem; margin-bottom: 1px; }
 .mobile-nav-btn.active { color: white; }
 .mobile-nav-btn.active i { color: var(--brand-red); }
 
@@ -135,10 +132,9 @@ html, body {
 .card { background: rgba(30,30,30,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; position: relative; }
 .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 
-/* MODAL FULL SCREEN (SCROLL OK) */
+/* MODALS */
 .full-screen-modal {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: #000; z-index: 99999; flex-direction: column; 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; flex-direction: column; 
     padding-top: env(safe-area-inset-top); 
 }
 .fs-header {
@@ -151,14 +147,12 @@ html, body {
     overflow-y: scroll; -webkit-overflow-scrolling: touch; padding: 20px; padding-bottom: 150px; 
 }
 .fs-close-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; display:flex; align-items:center; gap:5px; font-weight: 600;}
-
-/* MODALES POPUP */
 .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); padding-top: env(safe-area-inset-top); }
-.modal-content { background: #151515; margin: 10% auto; padding: 25px; width: 90%; border-radius: 20px; border: 1px solid #333; max-height: 80vh; overflow-y: auto; position: relative; }
+.modal-content { background: #151515; margin: 5% auto; padding: 25px; width: 95%; border-radius: 20px; border: 1px solid #333; max-height: 85vh; overflow-y: auto; position: relative; }
 .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border-radius: 50%; width: 30px; height: 30px; border: none; color: #fff; cursor: pointer; display:flex; align-items:center; justify-content:center;}
 #clientSelectorModal { z-index: 6000; }
 
-/* DIET DETAILS */
+/* DIETAS */
 .diet-hero { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-bottom: 30px; }
 .meal-section { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 15px; }
 .meal-title { color: var(--brand-red); margin-bottom: 15px; font-weight: 800; text-transform: uppercase; display:flex; justify-content:space-between; align-items: center; font-size: 0.95rem; }
@@ -168,8 +162,7 @@ html, body {
 
 @media (max-width: 768px) {
     .desktop-nav { display: none; }
-    /* La barra móvil ahora se muestra por defecto arriba, no hace falta forzarla aquí si no estaba oculta */
-    .mobile-bottom-nav { display: flex; } 
+    .mobile-bottom-nav { display: flex; }
     .app-header { padding-left: 15px; padding-right: 15px; }
     .diet-hero { grid-template-columns: 1fr; }
 }
