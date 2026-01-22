@@ -73,7 +73,7 @@ html, body {
     max-width: 1200px; margin: 0 auto;
 }
 
-/* --- MOBILE NAV (AJUSTE FINAL DE POSICIÓN) --- */
+/* --- MOBILE NAV (PEGADA AL SUELO Y SEPARADA DE ARRIBA) --- */
 .mobile-bottom-nav {
     display: none; 
     position: fixed; bottom: 0; left: 0; width: 100%; 
@@ -83,11 +83,12 @@ html, body {
     
     display: flex; justify-content: space-around; align-items: flex-end;
     
-    padding-bottom: 8px; 
-    /* AJUSTE CLAVE: Añadimos un poco de techo para empujar los iconos abajo */
-    padding-top: 20px; 
+    /* PADDING CLAVE: */
+    padding-bottom: 0; /* Pegado al suelo */
+    padding-top: 12px; /* Separación generosa de la línea superior */
     
-    height: 50px; 
+    /* Altura total */
+    height: 52px; 
 
     touch-action: none; overscroll-behavior: none;
 }
@@ -101,7 +102,9 @@ html, body {
     font-weight: 500; 
     gap: 2px; 
     height: 100%; 
-    padding-bottom: 2px;
+    
+    /* Margen de seguridad con el borde inferior físico */
+    padding-bottom: 4px;
 }
 .mobile-nav-btn i { 
     font-size: 1.4rem; 
@@ -183,4 +186,3 @@ select.glass-input option { background-color: #111; color: white; }
     .app-header { padding-left: 15px; padding-right: 15px; }
     .diet-hero, .guide-grid { grid-template-columns: 1fr; }
 }
-
