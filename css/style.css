@@ -85,7 +85,7 @@ html, body {
     
     padding-bottom: 8px; 
     /* AJUSTE CLAVE: Añadimos un poco de techo para empujar los iconos abajo */
-    padding-top: 6px; 
+    padding-top: 20px; 
     
     height: 50px; 
 
@@ -183,3 +183,4 @@ select.glass-input option { background-color: #111; color: white; }
     .app-header { padding-left: 15px; padding-right: 15px; }
     .diet-hero, .guide-grid { grid-template-columns: 1fr; }
 }
+
