@@ -44,6 +44,7 @@ html, body {
 .switch-auth a { color: var(--brand-red); text-decoration: none; font-weight: bold; cursor:pointer;}
 .pwa-install-box { margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: left; font-size: 0.85rem; color: #aaa; }
 .pwa-steps { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.05); }
+.pwa-steps strong { color: var(--brand-red); }
 
 /* APP HEADER */
 .app-header {
@@ -63,38 +64,21 @@ html, body {
 /* MAIN CONTENT */
 .main-content {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    padding-bottom: 90px; /* Suficiente para librar la barra */
-    padding-top: calc(85px + env(safe-area-inset-top)); 
+    padding-bottom: 90px; padding-top: calc(85px + env(safe-area-inset-top)); 
     padding-left: 15px; padding-right: 15px;
     overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; 
     max-width: 1200px; margin: 0 auto;
 }
 
-/* MOBILE NAV (PEGADA ABAJO SIN HUECOS) */
+/* MOBILE NAV */
 .mobile-bottom-nav {
-    display: none; 
-    position: fixed; bottom: 0; left: 0; width: 100%; 
-    background: #000; /* Negro puro para fundirse con el marco */
-    border-top: 1px solid rgba(255,255,255,0.15); 
-    z-index: 9999; 
-    
-    display: flex; justify-content: space-around; align-items: flex-start; /* Alinear arriba */
-    
-    /* El padding bottom es el del sistema. Lo demás es altura de botón */
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-top: 12px;
-    
-    /* La altura se calcula sola. No forzamos height */
-    touch-action: none; overscroll-behavior: none;
+    display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid rgba(255,255,255,0.15); z-index: 9999; 
+    display: flex; justify-content: space-around; align-items: flex-start;
+    padding-bottom: env(safe-area-inset-bottom); padding-top: 12px;
+    height: auto; min-height: 60px; touch-action: none; overscroll-behavior: none;
 }
 @media (min-width: 769px) { .mobile-bottom-nav { display: none !important; } }
-
-.mobile-nav-btn { 
-    background: none; border: none; color: #777; flex: 1; 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    font-size: 0.65rem; gap: 4px; font-weight: 500; 
-    height: 40px; /* Altura controlada del icono+texto */
-}
+.mobile-nav-btn { background: none; border: none; color: #777; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; gap: 4px; font-weight: 500; height: 40px; }
 .mobile-nav-btn i { font-size: 1.3rem; margin-bottom: 0; }
 .mobile-nav-btn.active { color: white; }
 .mobile-nav-btn.active i { color: var(--brand-red); }
@@ -116,28 +100,23 @@ html, body {
 .card { background: rgba(30,30,30,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; position: relative; }
 .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 
-/* MODALS PANTALLA COMPLETA (FIX SCROLL) */
-.full-screen-modal {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; flex-direction: column; 
-    padding-top: env(safe-area-inset-top); 
-}
-.fs-header {
-    position: absolute; top: env(safe-area-inset-top); left: 0; width: 100%; height: 60px;
-    background: rgba(20,20,20,0.98); border-bottom: 1px solid #333;
-    display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 2;
-}
-.fs-body {
-    position: absolute; top: calc(60px + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0;
-    overflow-y: scroll; -webkit-overflow-scrolling: touch; padding: 20px; padding-bottom: 200px; 
-}
-.fs-close-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; display:flex; align-items:center; gap:5px; font-weight: 600;}
+/* CREADOR MANUAL STYLES */
+.meal-group-header { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 5px; }
+.btn-mini-add { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #ccc; border-radius: 6px; padding: 4px 8px; font-size: 0.8rem; cursor: pointer; }
+.dynamic-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.btn-mini-del { background: rgba(255,0,0,0.2); border: 1px solid rgba(255,0,0,0.3); color: #ff9999; border-radius: 6px; width: 35px; height: 35px; display:flex; align-items:center; justify-content:center; cursor: pointer; }
 
-/* MODALES POPUP */
+/* MODALS */
+.full-screen-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; flex-direction: column; padding-top: env(safe-area-inset-top); }
+.fs-header { position: absolute; top: env(safe-area-inset-top); left: 0; width: 100%; height: 60px; background: rgba(20,20,20,0.98); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 2; }
+.fs-body { position: absolute; top: calc(60px + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0; overflow-y: scroll; -webkit-overflow-scrolling: touch; padding: 20px; padding-bottom: 200px; }
+.fs-close-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; display:flex; align-items:center; gap:5px; font-weight: 600;}
 .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); padding-top: env(safe-area-inset-top); }
 .modal-content { background: #151515; margin: 5% auto; padding: 25px; width: 95%; border-radius: 20px; border: 1px solid #333; max-height: 85vh; overflow-y: auto; position: relative; }
 .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border-radius: 50%; width: 30px; height: 30px; border: none; color: #fff; cursor: pointer; display:flex; align-items:center; justify-content:center;}
 #clientSelectorModal { z-index: 6000; }
 
+/* DIET DETAILS & GUIDES (ESTILOS RECUPERADOS) */
 .diet-hero { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-bottom: 30px; }
 .meal-section { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 15px; }
 .meal-title { color: var(--brand-red); margin-bottom: 15px; font-weight: 800; text-transform: uppercase; display:flex; justify-content:space-between; align-items: center; font-size: 0.95rem; }
@@ -145,9 +124,23 @@ html, body {
 .warning-box { background: rgba(255, 152, 0, 0.1); border-left: 4px solid #f57c00; padding: 15px; margin: 15px 0; border-radius: 4px; color: #ffcc80; font-size: 0.9rem; }
 .hydration-box { background: rgba(33, 150, 243, 0.1); border: 1px solid rgba(33, 150, 243, 0.3); color: #64b5f6; padding: 15px; border-radius: 8px; display: flex; gap: 10px; align-items: center; font-weight: 500; }
 
+/* Guía Grid */
+.guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+.guide-card { padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); }
+.guide-card h4 { margin: 0 0 10px 0; font-size: 0.9rem; font-weight: 800; text-transform: uppercase; }
+.guide-card ul { margin: 0; padding-left: 20px; color: #ccc; font-size: 0.85rem; }
+.guide-card li { margin-bottom: 5px; }
+.card-green { border-color: rgba(76, 175, 80, 0.3); background: rgba(76, 175, 80, 0.05); }
+.card-green h4 { color: #66bb6a; }
+.card-red { border-color: rgba(244, 67, 54, 0.3); background: rgba(244, 67, 54, 0.05); }
+.card-red h4 { color: #ef5350; }
+.sub-list { list-style: none; padding: 0; margin-top: 10px; }
+.sub-list li { margin-bottom: 8px; font-size: 0.9rem; color: #ddd; display: flex; gap: 10px; align-items: flex-start; }
+.sub-list li i { color: var(--brand-red); font-size: 1rem; margin-top: 2px; }
+
 @media (max-width: 768px) {
     .desktop-nav { display: none; }
     .mobile-bottom-nav { display: flex; }
     .app-header { padding-left: 15px; padding-right: 15px; }
-    .diet-hero { grid-template-columns: 1fr; }
+    .diet-hero, .guide-grid { grid-template-columns: 1fr; }
 }

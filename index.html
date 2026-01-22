@@ -123,34 +123,42 @@
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
                     <div><label>Categoría</label><select id="mdCat" class="glass-input"><option value="Déficit">Déficit</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option><option value="Senior">Senior</option></select></div>
-                    <div><label>Ingestas</label><select id="mdMealsCount" class="glass-input" onchange="toggleSnackInput()"><option value="3">3 (Des-Com-Cen)</option><option value="4">4 (+ Merienda)</option></select></div>
+                    <div><label>Ingestas</label><select id="mdMealsCount" class="glass-input" onchange="toggleSnackInput()"><option value="3">3 (D-C-C)</option><option value="4">4 (+ Merienda)</option></select></div>
                 </div>
 
-                <h4 style="color:var(--brand-red); margin-top:20px;">Desayuno</h4>
-                <input type="text" id="mdBk_A" placeholder="Opción A" class="glass-input">
-                <input type="text" id="mdBk_B" placeholder="Opción B" class="glass-input">
-                <input type="text" id="mdBk_C" placeholder="Opción C" class="glass-input">
-                
-                <h4 style="color:var(--brand-red); margin-top:20px;">Comida</h4>
-                <input type="text" id="mdLn_A" placeholder="Opción A" class="glass-input">
-                <input type="text" id="mdLn_B" placeholder="Opción B" class="glass-input">
-                <input type="text" id="mdLn_C" placeholder="Opción C" class="glass-input">
-                
+                <div class="meal-group-header">
+                    <h4 style="color:var(--brand-red); margin:0;">Desayuno</h4>
+                    <button type="button" class="btn-mini-add" onclick="addOptionRow('container-breakfast')">+ Opción</button>
+                </div>
+                <div id="container-breakfast" class="dynamic-container"></div>
+
+                <div class="meal-group-header">
+                    <h4 style="color:var(--brand-red); margin:0;">Comida</h4>
+                    <button type="button" class="btn-mini-add" onclick="addOptionRow('container-lunch')">+ Opción</button>
+                </div>
+                <div id="container-lunch" class="dynamic-container"></div>
+
                 <div id="snackSection" style="display:none;">
-                    <h4 style="color:var(--brand-red); margin-top:20px;">Merienda</h4>
-                    <input type="text" id="mdSn_A" placeholder="Opción A" class="glass-input">
-                    <input type="text" id="mdSn_B" placeholder="Opción B" class="glass-input">
+                    <div class="meal-group-header">
+                        <h4 style="color:var(--brand-red); margin:0;">Merienda</h4>
+                        <button type="button" class="btn-mini-add" onclick="addOptionRow('container-snack')">+ Opción</button>
+                    </div>
+                    <div id="container-snack" class="dynamic-container"></div>
                 </div>
 
-                <h4 style="color:var(--brand-red); margin-top:20px;">Cena</h4>
-                <input type="text" id="mdDn_A" placeholder="Opción A" class="glass-input">
-                <input type="text" id="mdDn_B" placeholder="Opción B" class="glass-input">
-                <input type="text" id="mdDn_C" placeholder="Opción C" class="glass-input">
-                
-                <h4 style="color:#aaa; margin-top:25px; font-size:0.9rem;">Extras / Recena</h4>
-                <input type="text" id="mdExtras" placeholder="Ej: Fruta, Yogur..." class="glass-input">
-                
-                <div style="height:100px;"></div>
+                <div class="meal-group-header">
+                    <h4 style="color:var(--brand-red); margin:0;">Cena</h4>
+                    <button type="button" class="btn-mini-add" onclick="addOptionRow('container-dinner')">+ Opción</button>
+                </div>
+                <div id="container-dinner" class="dynamic-container"></div>
+
+                <div class="meal-group-header" style="margin-top:25px; border-top:1px solid #333; padding-top:10px;">
+                    <h4 style="color:#aaa; margin:0; font-size:0.9rem;">Extras / Recena</h4>
+                    <button type="button" class="btn-mini-add" onclick="addOptionRow('container-extras')">+ Añadir</button>
+                </div>
+                <div id="container-extras" class="dynamic-container"></div>
+
+                <div style="height:150px;"></div>
             </form>
         </div>
     </div>

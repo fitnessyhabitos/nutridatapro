@@ -26,9 +26,6 @@ window.toggleAuth = () => {
     const l=document.getElementById('boxLogin'), r=document.getElementById('boxRegister');
     if(l.style.display==='none'){l.style.display='block';r.style.display='none';}else{l.style.display='none';r.style.display='block';}
 };
-window.toggleSnackInput = () => { const c=document.getElementById('mdMealsCount').value; document.getElementById('snackSection').style.display=(c==='4')?'block':'none'; };
-window.openManualCreator = () => { window.openModal('manualDietModal'); };
-window.triggerManualSubmit = () => { document.getElementById('manualDietForm').dispatchEvent(new Event('submit')); };
 
 window.handleLogin = async (e) => { e.preventDefault(); try{await signInWithEmailAndPassword(auth,document.getElementById('loginEmail').value,document.getElementById('loginPass').value);}catch(err){alert(err.message);} };
 window.handleRegister = async (e) => { e.preventDefault(); try{const c=await createUserWithEmailAndPassword(auth,document.getElementById('regEmail').value,document.getElementById('regPass').value); await setDoc(doc(db,"clientes",c.user.uid),{name:document.getElementById('regName').value,alias:document.getElementById('regAlias').value,email:document.getElementById('regEmail').value,goal:"General",currentDietName:null,dietHistory:[]}); alert("Creado.");}catch(err){alert(err.message);} };
@@ -72,6 +69,61 @@ function renderMenus(items) {
 function initAdminDashboard() { renderMenus([{id:'clients', label:'Atletas', icon:'bi-people-fill'},{id:'diets', label:'Biblioteca', icon:'bi-collection-fill'},{id:'inbox', label:'Mensajes', icon:'bi-chat-left-text-fill'}]); }
 function initAthleteDashboard() { document.getElementById('athleteGreeting').innerText = `Hola, ${userData.alias}`; renderMenus([{id:'myPlan', label:'Plan', icon:'bi-calendar-check-fill'},{id:'evolution', label:'Progreso', icon:'bi-graph-up-arrow'},{id:'education', label:'Guía', icon:'bi-book-half'},{id:'history', label:'Historial', icon:'bi-clock-history'},{id:'notes', label:'Notas', icon:'bi-pencil-square'}]); }
 
+// --- FUNCIONES DINÁMICAS (MANUAL CREATOR) ---
+window.toggleSnackInput = () => {
+    const count = document.getElementById('mdMealsCount').value;
+    document.getElementById('snackSection').style.display = (count === '4') ? 'block' : 'none';
+};
+
+window.openManualCreator = () => {
+    ['container-breakfast','container-lunch','container-snack','container-dinner','container-extras'].forEach(id => {
+        document.getElementById(id).innerHTML = '';
+        if(id !== 'container-extras') window.addOptionRow(id); // Agregar una fila inicial
+    });
+    document.getElementById('mdName').value = '';
+    document.getElementById('mdKcal').value = '';
+    window.openModal('manualDietModal');
+};
+
+window.addOptionRow = (containerId) => {
+    const container = document.getElementById(containerId);
+    const div = document.createElement('div');
+    div.className = 'dynamic-row';
+    div.innerHTML = `<input type="text" class="glass-input option-input" placeholder="Descripción de la opción..."><button type="button" class="btn-mini-del" onclick="this.parentElement.remove()"><i class="bi bi-x-lg"></i></button>`;
+    container.appendChild(div);
+};
+
+window.triggerManualSubmit = () => { document.getElementById('manualDietForm').dispatchEvent(new Event('submit')); };
+
+window.createManualDiet = async (e) => { 
+    e.preventDefault(); 
+    const gatherOptions = (containerId) => {
+        const container = document.getElementById(containerId);
+        const inputs = container.querySelectorAll('.option-input');
+        const opts = [];
+        inputs.forEach((inp) => { if(inp.value.trim() !== '') opts.push({ title: "Opción", desc: inp.value }); });
+        return opts.length > 0 ? opts : [{title:"Única", desc:"Según macros"}];
+    };
+    
+    // Extras
+    const extrasInputs = document.getElementById('container-extras').querySelectorAll('.option-input');
+    const extrasArr = [];
+    extrasInputs.forEach(inp => { if(inp.value.trim()) extrasArr.push(inp.value); });
+    const extrasStr = extrasArr.join(' + ');
+
+    const manualDiet = { 
+        name: document.getElementById('mdName').value, 
+        category: document.getElementById('mdCat').value, 
+        calories: document.getElementById('mdKcal').value, 
+        mealsPerDay: document.getElementById('mdMealsCount').value, 
+        isAdLibitum: false, description: "Plan manual.", macros: {p:30,c:40,f:30}, 
+        extras: extrasStr, 
+        plan: { breakfast: gatherOptions('container-breakfast'), lunch: gatherOptions('container-lunch'), dinner: gatherOptions('container-dinner'), snack: gatherOptions('container-snack') } 
+    }; 
+    try { await addDoc(collection(db, "diet_templates"), manualDiet); window.closeModal('manualDietModal'); alert("Guardada."); loadDietsAdmin(); } catch (e) { alert(e.message); } 
+};
+
+// --- VISUALIZADOR COMPLETO (CON GUÍAS RESTAURADAS) ---
 window.previewDietVisual = (diet) => {
     window.openModal('dietViewModal');
     const container = document.getElementById('diet-detail-content');
@@ -83,42 +135,54 @@ window.previewDietVisual = (diet) => {
     const pGrams = Math.round((total*(diet.macros.p/100))/4);
     const cGrams = Math.round((total*(diet.macros.c/100))/4);
     const fGrams = Math.round((total*(diet.macros.f/100))/9);
-    const bk = Math.round(total*0.25); const ln = Math.round(total*0.35); const sn = Math.round(total*0.15); const dn = Math.round(total*0.25);
 
     let mealsHtml = '';
     const renderOptions = (opts) => opts ? opts.map((o,i) => `<div class="option-card"><div style="color:var(--text-muted); font-size:0.75rem; font-weight:800; margin-bottom:5px;">OPCIÓN ${String.fromCharCode(65+i)}</div><div style="color:#eee; line-height:1.4; font-size:0.95rem;">${o.desc}</div></div>`).join('') : '';
-    const header = (ico, tit, k) => `<div class="meal-title"><span style="display:flex; gap:10px; align-items:center;"><i class="${ico}"></i> ${tit}</span> <span style="font-weight:normal; color:#888;">${diet.isAdLibitum?'':k+' kcal'}</span></div>`;
+    const header = (ico, tit) => `<div class="meal-title"><span style="display:flex; gap:10px; align-items:center;"><i class="${ico}"></i> ${tit}</span></div>`;
 
-    if(diet.plan.breakfast) mealsHtml += `<div class="meal-section">${header('bi-cup-hot-fill','DESAYUNO',bk)}${renderOptions(diet.plan.breakfast)}</div>`;
-    if(diet.plan.lunch) mealsHtml += `<div class="meal-section">${header('bi-egg-fried','COMIDA',ln)}${renderOptions(diet.plan.lunch)}</div>`;
-    if(diet.plan.snack && diet.plan.snack.length > 0) mealsHtml += `<div class="meal-section">${header('bi-apple','SNACK/MERIENDA',sn)}${renderOptions(diet.plan.snack)}</div>`;
-    if(diet.plan.dinner) mealsHtml += `<div class="meal-section">${header('bi-moon-stars-fill','CENA',dn)}${renderOptions(diet.plan.dinner)}</div>`;
+    if(diet.plan.breakfast) mealsHtml += `<div class="meal-section">${header('bi-cup-hot-fill','DESAYUNO')}${renderOptions(diet.plan.breakfast)}</div>`;
+    if(diet.plan.lunch) mealsHtml += `<div class="meal-section">${header('bi-egg-fried','COMIDA')}${renderOptions(diet.plan.lunch)}</div>`;
+    if(diet.plan.snack && diet.plan.snack.length > 0) mealsHtml += `<div class="meal-section">${header('bi-apple','SNACK/MERIENDA')}${renderOptions(diet.plan.snack)}</div>`;
+    if(diet.plan.dinner) mealsHtml += `<div class="meal-section">${header('bi-moon-stars-fill','CENA')}${renderOptions(diet.plan.dinner)}</div>`;
     
     if(diet.extras) mealsHtml += `<div class="meal-section" style="border-color:#555;"><div class="meal-title"><span style="display:flex; gap:10px; align-items:center; color:#aaa;"><i class="bi bi-plus-circle"></i> EXTRAS / RECENA</span></div><div style="color:#eee; padding:10px;">${diet.extras}</div></div>`;
 
-    const dietJson = encodeURIComponent(JSON.stringify(diet));
-    const adminBtn = isAdmin ? `<div style="margin-top:30px; border-top:1px solid #333; padding-top:20px;"><button class="btn-primary" onclick="window.prepareAssign('${dietJson}')">📲 ASIGNAR A ATLETA</button></div>` : '';
+    // GUÍAS Y SUSTITUCIONES
+    const replacementsHtml = guide.replacements ? `
+        <h4 style="margin-top:20px; color:white; font-size:0.9rem;">Sustituciones Inteligentes</h4>
+        <ul class="sub-list">${guide.replacements.map(r => `<li><i class="bi bi-arrow-right-circle"></i> <span>Cambiar <strong>${r.original}</strong> por <strong>${r.substitute}</strong></span></li>`).join('')}</ul>
+    ` : '';
 
-    container.innerHTML = `<div class="diet-hero"><div><div style="display:flex; gap:10px; margin-bottom:15px;"><span class="status-badge" style="background:var(--brand-red);">${diet.category}</span><span class="status-badge" style="border:1px solid #555;">${kcalDisplay}</span></div><h2 style="color:white; margin-bottom:10px; line-height:1.2;">${diet.name}</h2><p style="color:#ccc; margin-bottom:20px; font-size:0.95rem;">${guide.benefit || diet.description}</p><div class="hydration-box"><i class="bi bi-droplet-fill"></i><div><strong>Al despertar:</strong><br>500ml agua + pizca sal + limón.</div></div></div><div class="glass-panel" style="padding:20px; border-radius:16px; text-align:center; min-height:220px; display:flex; justify-content:center; align-items:center;"><div style="height:170px; width:100%; position:relative;"><canvas id="${chartId}"></canvas></div></div></div>${mealsHtml}<h3 style="margin-top:40px; margin-bottom:20px; border-top:1px solid #333; padding-top:20px; color:white;">Guía & Reglas</h3><div class="warning-box"><strong>⚠️ REGLAS:</strong><ul style="padding-left:20px; margin-top:10px; color:#ffcc80;">${guide.tips.map(t=>`<li>${t}</li>`).join('')}<li>Pesar todo en CRUDO.</li></ul></div>${adminBtn}`;
+    const adminBtn = isAdmin ? `<div style="margin-top:30px; border-top:1px solid #333; padding-top:20px;"><button class="btn-primary" onclick="window.prepareAssign('${encodeURIComponent(JSON.stringify(diet))}')">📲 ASIGNAR A ATLETA</button></div>` : '';
+
+    container.innerHTML = `
+        <div class="diet-hero">
+            <div>
+                <div style="display:flex; gap:10px; margin-bottom:15px;"><span class="status-badge" style="background:var(--brand-red);">${diet.category}</span><span class="status-badge" style="border:1px solid #555;">${kcalDisplay}</span></div>
+                <h2 style="color:white; margin-bottom:10px; line-height:1.2;">${diet.name}</h2>
+                <p style="color:#ccc; margin-bottom:20px; font-size:0.95rem;">${guide.benefit || diet.description}</p>
+                <div class="hydration-box"><i class="bi bi-droplet-fill"></i><div><strong>Al despertar:</strong><br>500ml agua + pizca sal + limón.</div></div>
+            </div>
+            <div class="glass-panel" style="padding:20px; border-radius:16px; text-align:center; min-height:220px; display:flex; justify-content:center; align-items:center;">
+                <div style="height:170px; width:100%; position:relative;"><canvas id="${chartId}"></canvas></div>
+            </div>
+        </div>
+        ${mealsHtml}
+        
+        <h3 style="margin-top:40px; margin-bottom:15px; border-top:1px solid #333; padding-top:20px; color:white;">Guía & Reglas</h3>
+        <div class="warning-box"><strong>⚠️ REGLAS:</strong><ul style="padding-left:20px; margin-top:10px; color:#ffcc80;">${guide.tips.map(t=>`<li>${t}</li>`).join('')}<li>Pesar todo en CRUDO.</li></ul></div>
+        
+        <div class="guide-grid">
+            <div class="guide-card card-green"><h4><i class="bi bi-check-circle-fill"></i> PRIORIZAR</h4><ul>${guide.allowed.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+            <div class="guide-card card-red"><h4><i class="bi bi-x-circle-fill"></i> EVITAR</h4><ul>${guide.forbidden.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+        </div>
+        ${replacementsHtml}
+        ${adminBtn}
+    `;
     setTimeout(() => { const ctx = document.getElementById(chartId); if(ctx) new Chart(ctx, { type: 'doughnut', data: { labels: [`Proteína: ${pGrams}g (${diet.macros.p}%)`, `Carbo: ${cGrams}g (${diet.macros.c}%)`, `Grasa: ${fGrams}g (${diet.macros.f}%)`], datasets: [{ data: [diet.macros.p, diet.macros.c, diet.macros.f], backgroundColor: ['#D32F2F', '#ffffff', '#333333'], borderWidth: 0 }] }, options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:true, position:'bottom', labels:{color:'#ccc', font:{size:11}, boxWidth:10}}}, cutout:'65%' } }); }, 250);
 }
 
 window.prepareAssign = (dietEncoded) => { dietToAssign = JSON.parse(decodeURIComponent(dietEncoded)); window.openClientSelector(); }
-
-window.createManualDiet = async (e) => { 
-    e.preventDefault(); 
-    const getOpt = (p) => { 
-        const o = []; 
-        const a=document.getElementById(p+'_A')?document.getElementById(p+'_A').value:null; 
-        const b=document.getElementById(p+'_B')?document.getElementById(p+'_B').value:null; 
-        const c=document.getElementById(p+'_C')?document.getElementById(p+'_C').value:null;
-        if(a)o.push({title:"A",desc:a}); if(b)o.push({title:"B",desc:b}); if(c)o.push({title:"C",desc:c});
-        return o.length?o:null; 
-    }; 
-    const manualDiet = { name: document.getElementById('mdName').value, category: document.getElementById('mdCat').value, calories: document.getElementById('mdKcal').value, mealsPerDay: document.getElementById('mdMealsCount').value, isAdLibitum: false, description: "Plan manual.", macros: {p:30,c:40,f:30}, extras: document.getElementById('mdExtras').value, plan: { breakfast: getOpt('mdBk')||[{title:"U",desc:"S/M"}], lunch: getOpt('mdLn')||[{title:"U",desc:"S/M"}], dinner: getOpt('mdDn')||[{title:"U",desc:"S/M"}], snack: getOpt('mdSn')||[] } }; 
-    try { await addDoc(collection(db, "diet_templates"), manualDiet); window.closeModal('manualDietModal'); alert("Guardada."); loadDietsAdmin(); } catch (e) { alert(e.message); } 
-};
-
 window.openClientSelector = async () => { window.openModal('clientSelectorModal'); const list = document.getElementById('clientSelectorList'); list.innerHTML = 'Cargando...'; const q = await getDocs(collection(db, "clientes")); list.innerHTML = ''; if(q.empty) list.innerHTML = 'Sin atletas.'; q.forEach(d => { const c = d.data(); const div = document.createElement('div'); div.className = 'card'; div.style.marginBottom='10px'; div.onclick = () => window.assignDietFromModal(d.id, c.alias); div.innerHTML = `<h4>${c.alias}</h4><small>${c.name}</small>`; list.appendChild(div); }); };
 window.assignDietFromModal = async (cid, name) => { if(!dietToAssign || !confirm(`¿Asignar a ${name}?`)) return; const ref = doc(db, "clientes", cid); const h = (await getDoc(ref)).data().dietHistory || []; h.unshift({ name: dietToAssign.name, date: new Date().toLocaleDateString(), category: dietToAssign.category }); await updateDoc(ref, { currentDietName: dietToAssign.name, currentDietData: dietToAssign, dietHistory: h }); alert(`✅ Asignado.`); window.closeModal('clientSelectorModal'); window.closeModal('dietViewModal'); };
 window.resetDatabaseManual = async () => { if(!isAdmin) return alert("Solo admin"); if(!confirm("⚠️ Resetear DB?")) return; try { const q=await getDocs(collection(db,"diet_templates")); const p=[]; q.forEach(d=>p.push(deleteDoc(doc(db,"diet_templates",d.id)))); await Promise.all(p); const bs=50; for(let i=0; i<dietsDatabase.length; i+=bs){const ch=dietsDatabase.slice(i,i+bs); await Promise.all(ch.map(d=>addDoc(collection(db,"diet_templates"),d)));} alert("Hecho"); loadDietsAdmin(); } catch(e) { alert(e.message); } };
@@ -135,3 +199,8 @@ window.markRead=async(id)=>{await updateDoc(doc(db,"notas",id),{read:true}); ren
 function renderMyPlan(){const c=document.getElementById('myCurrentDietContainer'); if(!userData.currentDietData){c.innerHTML='<div class="warning-box">Sin plan.</div>';return;} window.previewDietVisual(userData.currentDietData);}
 function renderEducation(){ const c=document.getElementById('eduContent'); if(!userData.currentDietData){c.innerHTML='Sin plan';return;} const guide=dietGuides[userData.currentDietData.category]||dietGuides["Volumen"]; c.innerHTML=`<div class="warning-box"><h3>Tips ${userData.currentDietData.category}</h3><ul>${guide.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`; }
 async function loadEvolutionData() { const l = document.getElementById('weightHistoryList'); l.innerHTML="Cargando..."; const q=query(collection(db,"checkins"),where("uid","==",currentUser.uid),orderBy("date","asc")); const snap=await getDocs(q); const d=[], lbl=[]; let html=''; snap.forEach(doc=>{ const r=doc.data(); d.push(r.weight); lbl.push(r.date.substring(5)); html=`<div class="card" style="flex-direction:row;justify-content:space-between;padding:15px;margin-bottom:10px;"><span>${r.date}</span><strong>${r.weight}kg</strong></div>`+html; }); l.innerHTML=html||'<p>Sin registros.</p>'; if(window.evolutionChart)window.evolutionChart.destroy(); window.evolutionChart=new Chart(document.getElementById('weightChart'),{type:'line',data:{labels:lbl,datasets:[{label:'Peso',data:d,borderColor:'#D32F2F',tension:0.3,fill:true,backgroundColor:'rgba(211,47,47,0.1)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#333'}}}}}); }
+
+// DETECCIÓN PWA: Ocultar instrucciones
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    const i = document.getElementById('installInstructions'); if(i) i.style.display = 'none';
+}
