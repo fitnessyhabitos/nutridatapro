@@ -8,7 +8,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
@@ -32,29 +31,23 @@
             <p style="color:#aaa; margin-bottom:30px;">Plataforma de Alto Rendimiento</p>
             
             <div id="boxLogin">
-                <form id="formLogin">
-                    <div class="input-group">
-                        <i class="bi bi-envelope"></i>
-                        <input type="email" id="loginEmail" placeholder="Correo electrónico" required autocomplete="email">
-                    </div>
-                    <div class="input-group">
-                        <i class="bi bi-lock"></i>
-                        <input type="password" id="loginPass" placeholder="Contraseña" required autocomplete="current-password">
-                    </div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="input-group"><i class="bi bi-envelope"></i><input type="email" id="loginEmail" placeholder="Correo electrónico" required></div>
+                    <div class="input-group"><i class="bi bi-lock"></i><input type="password" id="loginPass" placeholder="Contraseña" required></div>
                     <button type="submit" class="btn-primary full-width">ENTRAR</button>
                 </form>
-                <p class="switch-auth">¿No tienes cuenta? <a href="#" id="btnShowRegister">Regístrate aquí</a></p>
+                <p class="switch-auth">¿No tienes cuenta? <a onclick="toggleAuth()">Regístrate aquí</a></p>
             </div>
             
             <div id="boxRegister" style="display:none;">
-                <form id="formRegister">
+                <form onsubmit="handleRegister(event)">
                     <div class="input-group"><i class="bi bi-person"></i><input type="text" id="regName" placeholder="Nombre" required></div>
-                    <div class="input-group"><i class="bi bi-tag"></i><input type="text" id="regAlias" placeholder="Alias (Ej: Alex)" required></div>
-                    <div class="input-group"><i class="bi bi-envelope"></i><input type="email" id="regEmail" placeholder="Email" required autocomplete="email"></div>
-                    <div class="input-group"><i class="bi bi-lock"></i><input type="password" id="regPass" placeholder="Contraseña nueva" required autocomplete="new-password"></div>
+                    <div class="input-group"><i class="bi bi-tag"></i><input type="text" id="regAlias" placeholder="Alias" required></div>
+                    <div class="input-group"><i class="bi bi-envelope"></i><input type="email" id="regEmail" placeholder="Email" required></div>
+                    <div class="input-group"><i class="bi bi-lock"></i><input type="password" id="regPass" placeholder="Contraseña" required></div>
                     <button type="submit" class="btn-primary full-width">CREAR CUENTA</button>
                 </form>
-                <p class="switch-auth"><a href="#" id="btnShowLogin">Volver a iniciar sesión</a></p>
+                <p class="switch-auth"><a onclick="toggleAuth()">Volver a Login</a></p>
             </div>
         </div>
     </section>
@@ -67,76 +60,45 @@
             </div>
             <nav class="desktop-nav" id="desktopMenu"></nav>
             <div class="user-actions">
-                <button id="btnLogout" class="btn-icon"><i class="bi bi-box-arrow-right"></i></button>
+                <button onclick="logoutApp()" class="btn-icon"><i class="bi bi-box-arrow-right"></i></button>
             </div>
         </header>
 
         <main class="main-content" id="mainContent">
             <div id="adminView" style="display:none;">
-                <section id="clients-section">
-                    <header class="section-header"><h1>Atletas</h1><button class="btn-primary sm" id="btnOpenClientModal">+ Nuevo</button></header>
-                    <div class="grid-container" id="clients-grid"></div>
-                </section>
-                
+                <section id="clients-section"><header class="section-header"><h1>Atletas</h1><button class="btn-primary sm" onclick="openModal('clientModal')">+ Nuevo</button></header><div class="grid-container" id="clients-grid"></div></section>
                 <section id="diets-section" style="display:none;">
                     <header class="section-header">
                         <h1>Biblioteca</h1>
                         <div class="toolbar">
-                            <select id="filterCategory" class="glass-input sm">
-                                <option value="all">Todas</option><option value="Déficit">Déficit</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option><option value="Senior">Senior</option>
-                            </select>
-                            <div class="search-box"><i class="bi bi-search"></i><input type="text" id="searchKcal" placeholder="Buscar..."></div>
-                            <button class="btn-danger sm" id="btnResetDB">Reset</button>
-                            <button class="btn-primary sm" id="btnOpenManualModal">+ Manual</button>
+                            <select id="filterCategory" class="glass-input sm" onchange="filterDiets()"><option value="all">Todas</option><option value="Déficit">Déficit</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option><option value="Senior">Senior</option></select>
+                            <div class="search-box"><i class="bi bi-search"></i><input type="text" id="searchKcal" placeholder="Buscar..." oninput="filterDiets()"></div>
+                            <button class="btn-danger sm" onclick="resetDatabaseManual()">Reset</button>
+                            <button class="btn-primary sm" onclick="openModal('manualDietModal')">+ Manual</button>
                         </div>
                     </header>
                     <div class="grid-container" id="diets-grid"></div>
                 </section>
-                
-                <section id="inbox-section" style="display:none;">
-                    <header class="section-header"><h1>Mensajes</h1></header>
-                    <div id="inbox-list" class="list-container"></div>
-                </section>
+                <section id="inbox-section" style="display:none;"><header class="section-header"><h1>Mensajes</h1></header><div id="inbox-list" class="list-container"></div></section>
             </div>
 
             <div id="athleteView" style="display:none;">
-                <section id="myPlan-section">
-                    <header class="section-header"><h1 id="athleteGreeting">Hola</h1></header>
-                    <div id="myCurrentDietContainer"></div>
-                </section>
-                <section id="evolution-section" style="display:none;">
-                    <header class="section-header"><h1>Evolución</h1><button class="btn-primary sm" id="btnOpenCheckinModal">+ Peso</button></header>
-                    <div class="card glass-panel"><div style="height:250px;"><canvas id="weightChart"></canvas></div></div>
-                    <div id="weightHistoryList" class="list-container"></div>
-                </section>
+                <section id="myPlan-section"><header class="section-header"><h1 id="athleteGreeting">Hola</h1></header><div id="myCurrentDietContainer"></div></section>
+                <section id="evolution-section" style="display:none;"><header class="section-header"><h1>Evolución</h1><button class="btn-primary sm" onclick="openModal('checkinModal')">+ Peso</button></header><div class="card glass-panel"><div style="height:250px;"><canvas id="weightChart"></canvas></div></div><div id="weightHistoryList" class="list-container"></div></section>
                 <section id="education-section" style="display:none;"><div id="eduContent"></div></section>
                 <section id="history-section" style="display:none;"><div id="historyList" class="grid-container"></div></section>
-                <section id="notes-section" style="display:none;"><h1>Notas</h1><textarea id="athleteNoteInput" class="glass-input" rows="3"></textarea><button class="btn-primary" id="btnSendNote" style="margin-top:10px;">Enviar</button><div id="myNotesHistory" style="margin-top:20px;"></div></section>
+                <section id="notes-section" style="display:none;"><h1>Notas</h1><textarea id="athleteNoteInput" class="glass-input" rows="3"></textarea><button class="btn-primary" onclick="sendAthleteNote()" style="margin-top:10px;">Enviar</button><div id="myNotesHistory" style="margin-top:20px;"></div></section>
             </div>
         </main>
 
         <nav class="mobile-bottom-nav glass-panel" id="mobileMenu"></nav>
     </div>
 
-    <div id="dietViewModal" class="full-screen-modal">
-        <div class="fs-header">
-            <button class="fs-close-btn" id="btnCloseDietModal"><i class="bi bi-arrow-left"></i> Volver</button>
-            <h3 style="color:white; margin:0;">Plan</h3>
-            <div style="width:40px;"></div>
-        </div>
-        <div class="fs-body" id="diet-detail-content"></div>
-    </div>
-
-    <div id="clientSelectorModal" class="modal">
-        <div class="modal-content" style="max-width:500px; height:80vh;">
-            <div class="modal-header-fixed"><h3>Asignar a...</h3><button class="close-btn" id="btnCloseSelectorModal"><i class="bi bi-x"></i></button></div>
-            <div class="modal-body"><div id="clientSelectorList" class="list-container"></div></div>
-        </div>
-    </div>
-
-    <div id="clientModal" class="modal"><div class="modal-content glass-panel" style="max-width:500px; margin:auto;"><span class="close" id="btnCloseClientModal">&times;</span><h2>Nuevo Atleta</h2><form id="addClientForm"><label>Nombre</label><input type="text" id="clientName" class="glass-input" required><label>Alias</label><input type="text" id="clientAlias" class="glass-input" required><label>Email</label><input type="email" id="clientEmail" class="glass-input" required><label>Objetivo</label><select id="clientGoal" class="glass-input"><option value="Perdida Grasa">Definición</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option></select><button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar</button></form></div></div>
-    <div id="checkinModal" class="modal"><div class="modal-content glass-panel" style="max-width:400px; margin:auto;"><span class="close" id="btnCloseCheckinModal">&times;</span><h2>Registrar Peso</h2><form id="checkinForm"><label>Fecha</label><input type="date" id="checkinDate" class="glass-input" required><label>Peso (kg)</label><input type="number" step="0.1" id="checkinWeight" class="glass-input" required><button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar</button></form></div></div>
-    <div id="manualDietModal" class="modal"><div class="modal-content glass-panel" style="max-width:700px; margin:auto; max-height:90vh;"><span class="close" id="btnCloseManualModal">&times;</span><h2>Diseñador Manual</h2><form onsubmit="createManualDiet(event)"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;"><div><label>Nombre</label><input type="text" id="mdName" class="glass-input" required></div><div><label>Kcal</label><input type="number" id="mdKcal" class="glass-input" required></div></div><label>Categoría</label><select id="mdCat" class="glass-input" style="margin-bottom:25px;"><option value="Déficit">Déficit</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option><option value="Senior">Senior</option></select><h4 style="color:var(--brand-red); margin-top:10px;">Desayuno</h4><input type="text" id="mdBk_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdBk_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdBk_C" placeholder="Opción C" class="glass-input"><h4 style="color:var(--brand-red); margin-top:10px;">Comida</h4><input type="text" id="mdLn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdLn_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdLn_C" placeholder="Opción C" class="glass-input"><h4 style="color:var(--brand-red); margin-top:10px;">Cena</h4><input type="text" id="mdDn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdDn_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdDn_C" placeholder="Opción C" class="glass-input"><button type="submit" class="btn-primary" style="width:100%; margin-top:30px; padding:15px;">Guardar</button></form></div></div>
+    <div id="dietViewModal" class="full-screen-modal"><div class="fs-header"><button class="fs-close-btn" onclick="closeModal('dietViewModal')"><i class="bi bi-arrow-left"></i> Volver</button><h3 style="color:white; margin:0;">Plan</h3><div style="width:40px;"></div></div><div class="fs-body" id="diet-detail-content"></div></div>
+    <div id="clientSelectorModal" class="modal"><div class="modal-content" style="max-width:500px; height:80vh;"><div class="modal-header-fixed"><h3>Asignar a...</h3><button class="close-btn" onclick="closeModal('clientSelectorModal')"><i class="bi bi-x"></i></button></div><div class="modal-body"><div id="clientSelectorList" class="list-container"></div></div></div></div>
+    <div id="clientModal" class="modal"><div class="modal-content glass-panel" style="max-width:500px; margin:auto;"><span class="close" onclick="closeModal('clientModal')">&times;</span><h2>Nuevo Atleta</h2><form onsubmit="handleAddClient(event)"><label>Nombre</label><input type="text" id="clientName" class="glass-input" required><label>Alias</label><input type="text" id="clientAlias" class="glass-input" required><label>Email</label><input type="email" id="clientEmail" class="glass-input" required><label>Objetivo</label><select id="clientGoal" class="glass-input"><option value="Perdida Grasa">Definición</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option></select><button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar</button></form></div></div>
+    <div id="checkinModal" class="modal"><div class="modal-content glass-panel" style="max-width:400px; margin:auto;"><span class="close" onclick="closeModal('checkinModal')">&times;</span><h2>Registrar Peso</h2><form onsubmit="handleCheckin(event)"><label>Fecha</label><input type="date" id="checkinDate" class="glass-input" required><label>Peso (kg)</label><input type="number" step="0.1" id="checkinWeight" class="glass-input" required><button type="submit" class="btn-primary" style="width:100%; margin-top:20px">Guardar</button></form></div></div>
+    <div id="manualDietModal" class="modal"><div class="modal-content glass-panel" style="max-width:700px; margin:auto; max-height:90vh;"><span class="close" onclick="closeModal('manualDietModal')">&times;</span><h2>Diseñador Manual</h2><form onsubmit="createManualDiet(event)"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;"><div><label>Nombre</label><input type="text" id="mdName" class="glass-input" required></div><div><label>Kcal</label><input type="number" id="mdKcal" class="glass-input" required></div></div><label>Categoría</label><select id="mdCat" class="glass-input" style="margin-bottom:25px;"><option value="Déficit">Déficit</option><option value="Volumen">Volumen</option><option value="Salud">Salud</option><option value="Senior">Senior</option></select><h4 style="color:var(--brand-red); margin-top:10px;">Desayuno</h4><input type="text" id="mdBk_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdBk_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdBk_C" placeholder="Opción C" class="glass-input"><h4 style="color:var(--brand-red); margin-top:10px;">Comida</h4><input type="text" id="mdLn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdLn_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdLn_C" placeholder="Opción C" class="glass-input"><h4 style="color:var(--brand-red); margin-top:10px;">Cena</h4><input type="text" id="mdDn_A" placeholder="Opción A" class="glass-input"><input type="text" id="mdDn_B" placeholder="Opción B" class="glass-input"><input type="text" id="mdDn_C" placeholder="Opción C" class="glass-input"><button type="submit" class="btn-primary" style="width:100%; margin-top:30px; padding:15px;">Guardar</button></form></div></div>
 
     <script type="module" src="js/app.js"></script>
 </body>
