@@ -11,13 +11,13 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-/* FIX iOS: Bloquea el rebote elástico de toda la app */
+/* FIX iOS: Bloquea rebote global */
 body {
     margin: 0; font-family: 'Inter', sans-serif;
     background: var(--bg-dark); color: var(--text-main);
     position: fixed; width: 100%; height: 100%; height: 100dvh;
-    overflow: hidden; /* Importante */
-    overscroll-behavior: none; /* Bloquea rebote */
+    overflow: hidden;
+    overscroll-behavior: none;
     background-color: #000; 
 }
 
@@ -25,7 +25,7 @@ body {
 .background-blobs { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
 .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; }
 .blob-1 { width: 90vw; height: 90vw; background: radial-gradient(circle, var(--brand-red) 0%, transparent 70%); top: -20%; left: -20%; }
-.glass-overlay { position: absolute; top:0; left:0; width:100%; height:100%; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: -1; }
+.glass-overlay { position: absolute; top:0; left:0; width:100%; height:100%; backdrop-filter: blur(15px); z-index: -1; }
 
 /* LANDING */
 .landing-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2000; overflow-y: auto; }
@@ -41,15 +41,11 @@ body {
 
 /* APP HEADER */
 .app-header {
-    height: auto; min-height: 50px;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 5px 20px; 
-    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-    background: rgba(15, 15, 15, 0.98); 
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-top: calc(env(safe-area-inset-top) + 5px);
-    padding-bottom: 10px;
-    touch-action: none; /* Evita que arrastres el header */
+    height: auto; min-height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 5px 20px; 
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(15, 15, 15, 0.98); 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    padding-top: calc(env(safe-area-inset-top) + 5px); padding-bottom: 10px;
+    touch-action: none;
 }
 .logo-area { display: flex; align-items: center; gap: 10px; }
 .logo-area img { height: 28px; border-radius: 6px; }
@@ -60,30 +56,22 @@ body {
 
 /* MAIN CONTENT */
 .main-content {
-    /* Usamos position absolute para que el scroll sea interno y no del body */
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    /* Absolute para asegurar scroll interno independiente */
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     overflow-y: auto; -webkit-overflow-scrolling: touch;
-    
     padding-top: calc(85px + env(safe-area-inset-top)); 
     padding-bottom: 120px;
     padding-left: 15px; padding-right: 15px;
-    max-width: 1200px; margin: 0 auto; 
-    right: 0; /* Centrado */
+    max-width: 1200px; margin: 0 auto;
 }
 
-/* MOBILE NAV (FIX ESTÁTICO) */
+/* MOBILE NAV */
 .mobile-bottom-nav {
     display: none; position: fixed; bottom: 0; left: 0; width: 100%; 
-    background: rgba(10, 10, 10, 0.99); /* Casi negro solido */
-    border-top: 1px solid rgba(255,255,255,0.15); 
-    z-index: 9999; /* Por encima de todo */
+    background: rgba(10, 10, 10, 0.99); border-top: 1px solid rgba(255,255,255,0.15); z-index: 9999; 
     justify-content: space-around; align-items: center;
-    padding-bottom: env(safe-area-inset-bottom); 
-    padding-top: 8px; 
-    height: calc(55px + env(safe-area-inset-bottom));
-    /* FIX MOVIMIENTO: Bloquea gestos sobre la barra */
-    touch-action: none; 
-    overscroll-behavior: none;
+    padding-bottom: env(safe-area-inset-bottom); padding-top: 8px; height: calc(55px + env(safe-area-inset-bottom));
+    touch-action: none; /* Bloquea gestos en la barra */
 }
 .mobile-nav-btn { background: none; border: none; color: #666; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: 0.65rem; gap: 4px; font-weight: 600; height: 100%;}
 .mobile-nav-btn i { font-size: 1.3rem; }
@@ -100,36 +88,46 @@ body {
 .search-box input { background: transparent; border: none; color: white; width: 120px; font-size: 0.9rem; outline: none; }
 .search-box i { color: #888; font-size: 0.9rem; margin-right: 5px; }
 
-/* GRID & CARDS */
+/* GRID */
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 10px; }
 .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
 .card { background: rgba(30,30,30,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; position: relative; }
 .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 
-/* --- FIX SCROLL MODAL (SOLUCIÓN DEFINITIVA) --- */
-.full-screen-modal { 
-    display: none; 
-    /* Usamos fixed para cubrir todo, pero flex column para la estructura */
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; height: 100dvh; 
-    background: #000; z-index: 5000; 
-    flex-direction: column; 
+/* --- FIX SCROLL MODAL (ESTRATEGIA ABSOLUTA) --- */
+.full-screen-modal {
+    display: none;
+    /* Posición fija ocupando todo */
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; height: 100dvh;
+    background: #000; z-index: 99999; /* Máxima prioridad */
+    
+    /* Padding para respetar el notch */
     padding-top: env(safe-area-inset-top); 
-    overflow: hidden; /* El contenedor padre NO debe hacer scroll */
 }
-.fs-header { 
-    min-height: 50px; height: auto; background: rgba(20,20,20,0.98); border-bottom: 1px solid #333; 
-    display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; 
-    flex-shrink: 0; /* Header no encoge */
+
+.fs-header {
+    /* Cabecera fija dentro del modal */
+    position: absolute; top: env(safe-area-inset-top); left: 0; width: 100%;
+    height: 60px;
+    background: rgba(20,20,20,0.98); border-bottom: 1px solid #333;
+    display: flex; align-items: center; justify-content: space-between; 
+    padding: 0 15px; z-index: 2;
 }
-.fs-body { 
-    flex: 1; /* Ocupa el resto del espacio */
-    overflow-y: auto; /* Scroll AQUI */
-    -webkit-overflow-scrolling: touch; /* Suavidad iOS */
-    padding: 20px; 
-    width: 100%; 
-    padding-bottom: 200px !important; /* Espacio extra abajo garantizado */
+
+.fs-body {
+    /* Cuerpo con scroll absoluto */
+    position: absolute;
+    top: calc(60px + env(safe-area-inset-top)); /* Empieza debajo del header */
+    left: 0; right: 0; bottom: 0; /* Hasta el final */
+    
+    overflow-y: scroll; /* Scroll activo */
+    -webkit-overflow-scrolling: touch; /* Rebote nativo iOS */
+    
+    padding: 20px;
+    padding-bottom: 150px; /* Espacio extra final seguro */
 }
+
 .fs-close-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; display:flex; align-items:center; gap:5px; font-weight: 600;}
 
 /* MODALES POPUP */
@@ -138,7 +136,7 @@ body {
 .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border-radius: 50%; width: 30px; height: 30px; border: none; color: #fff; cursor: pointer; display:flex; align-items:center; justify-content:center;}
 #clientSelectorModal { z-index: 6000; }
 
-/* DIET DETAILS */
+/* DIETAS */
 .diet-hero { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-bottom: 30px; }
 .meal-section { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 15px; }
 .meal-title { color: var(--brand-red); margin-bottom: 15px; font-weight: 800; text-transform: uppercase; display:flex; justify-content:space-between; align-items: center; font-size: 0.95rem; }
